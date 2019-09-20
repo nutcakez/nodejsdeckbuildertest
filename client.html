@@ -1,0 +1,26 @@
+Test
+
+<button onclick="showrooms()">Showrooms</button>
+<button onclick="Createroom()">Create room</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+<script>
+    var socket=io();
+
+    socket.emit('join',{
+        roomnumber:'1'
+    })
+
+    socket.on('rooms',function(data){
+        console.log(data);
+    })
+
+    function showrooms(){
+        console.log("Button pressed")
+        socket.emit('showrooms')
+    }
+
+    function Createroom(){
+        console.log("Create room pressed");
+        socket.emit('CreateNewRoom');
+    }
+</script>
