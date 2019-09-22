@@ -2,6 +2,17 @@ Test
 
 <button onclick="showrooms()">Showrooms</button>
 <button onclick="Createroom()">Create room</button>
+<button onclick="joinroom()">Join room</button>
+<textarea id="roomnumber"></textarea>
+<div id="playground">
+    <div id="rooms">
+        
+    </div>
+</div>
+<script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 <script>
     var socket=io();
@@ -12,10 +23,23 @@ Test
 
     socket.on('rooms',function(data){
         console.log(data);
+        DisplayRooms(data.rooms);
     })
 
+    socket.on('message',function(data){
+        console.log("received self talk from server")
+        console.log(data.sender+"   "+data.message);
+    })
+
+    socket.on('availablerooms',function(data){
+        console.log("received available rooms")
+    })
+
+    socket.on('test',function(){
+        alert("megy");
+    })
     function showrooms(){
-        console.log("Button pressed")
+        console.log("Button pressed to show rooms")
         socket.emit('showrooms')
     }
 
@@ -23,4 +47,15 @@ Test
         console.log("Create room pressed");
         socket.emit('CreateNewRoom');
     }
+
+   function DisplayRooms(roomarray){
+        $('#rooms').remove();
+        $('#playground').append("<div id='rooms'></div)")
+        for (var i = roomarray.length - 1; i >= 0; i--) {
+            $('#rooms').append("<span>"+roomarray[i].users+"</span><br>")
+        }
+   }
+
+
+
 </script>
