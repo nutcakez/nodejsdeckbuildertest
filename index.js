@@ -20,14 +20,20 @@ io.sockets.on('connection',function(socket){
     console.log("socket connection "+socket.id);
     users.push({
         'username':socket.id,
-        'currentroom':''
+        'currentroom':'',
+        'state':'',
+        'roomindex':''
     });
     SendAvailableRooms(socket);
 
     socket.on('showrooms',function(){
         console.log("server got the showrooms message")
         socket.emit('rooms',rooms);
+        io.sockets.connected[users[0].username].emit('message',{
+            'sender':'server',
+            'message':'testing to send single user'
         })
+    })
 
 
     socket.on('CreateNewRoom',function(){
@@ -45,6 +51,7 @@ io.sockets.on('connection',function(socket){
             socket.join(data.room);
             console.log("this is the index of it "+IndexOfRoom(data.room,rooms));
             rooms[IndexOfRoom(data.room,rooms)].users.push(socket.id);
+
         }
         else
         {
@@ -52,6 +59,14 @@ io.sockets.on('connection',function(socket){
         }
         console.log(socket.id+"  user joined this room: "+data.room);
         console.log("current players inside: "+rooms[IndexOfRoom(data.room,rooms)].users)
+        if(rooms[IndexOfRoom(data.room,rooms)].users.length>1){
+                GameStart();
+        }
+        else
+        {
+            console.log("noppeee")
+            rooms[IndexOfRoom(data.room,rooms)].users
+        }
     })
 
     socket.on('delayed',function(){
@@ -60,18 +75,23 @@ io.sockets.on('connection',function(socket){
         }, 3500);
     })
 
+    socket.on('IMHERE',function(){
+        if(rooms[0].responsefrom.length==0){
+            rooms[0].responsefrom.push(socket.id);
+        }
+        else
+        {
+            if(rooms[0].responsefrom.length==1 && rooms[0].responsefrom[0]!=socket.id){
+                rooms[0].responsefrom.push(socket.id);
+            }
+        }
+    })
    
 })
 
 
 
-function CreateNewRoom(username){
-    rooms.push({
-        "roomid":username,
-        "users":[username],
-        "visible":[true]
-    })
-}
+
 
 function CreateGame(username){
 
@@ -104,4 +124,55 @@ function FindRoom(roomid,roomarray){
         }
     })
     return idtoreturn;
+}
+
+
+
+function CreateNewRoom(username){
+    rooms.push({
+        "roomid":username,
+        "users":[username],
+        "visible":[true],
+        "state":'lobby',
+        "waiting":[],
+        "responsefrom":[]
+    })
+}
+
+//first room (0) is the game room
+async function GameStart(){
+    console.log("game started!!- GameStart()")
+    rooms[0].state='ingame';
+    let gamestarted=true;
+    let wincondition=false;
+    let reactionchecker=[];
+    let timeover=false;
+    let timer;
+    let interval;
+    do{
+        await waitingforresponseortime();
+        timeover=false;
+        rooms[0].responsefrom=[];
+        console.log("end of cycle")
+    }while(wincondition==false)
+}
+
+function waitingforresponseortime(){
+    console.log("started the function")
+    let timer=setTimeout(function(){
+            console.log("timer out!")
+            timer="done";
+        },6000);
+    return new Promise(resolve=>{
+        console.log("in the promisee")
+        let myi=setInterval(function(){
+            console.log("Cycle")
+            if(timer=="done" || rooms[0].responsefrom.length==2){
+                console.log("if is done")
+                clearInterval(myi)
+                resolve("done")
+
+            }
+        },250)
+    })
 }

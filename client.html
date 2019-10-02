@@ -1,9 +1,13 @@
 Test
 
 <button onclick="showrooms()">Showrooms</button>
-<button onclick="Createroom()">Create room</button>
+<button onclick='Createroom()'>Create room</button>
 <button onclick="joinroom()">Join room</button>
 <button onclick="delayedfun()">Delayed message</button>
+<button onclick="test()">TEST</button>
+<button onclick="changez()"> set promise </button>
+<br>
+<button onclick="imhere()">IM HERE</button>
 <textarea id="roomnumber"></textarea>
 <div id="playground">
     <div id="rooms">
@@ -40,7 +44,34 @@ Test
     socket.on('delayedmessage',function(){
         alert("megy a delay!")
     })
+    let promise1;
+    async function test(){
+        var message=await setpromise();
+        console.log(message);
+    }
+   
+    change={
+        value:10,
+        valuelistener:function(val){},
+        set value(val){
+            this.value=val;
+            this.valuelistener(val);
+        },
+        get value(){
+            return this.value;
+        },
+        registerListener:function(listener){
+            this.valuelistener=listener;
+        }
+    }
 
+    
+    function changez(){
+        change.value=11;
+    }
+
+
+    
     function showrooms(){
         console.log("Button pressed to show rooms")
         socket.emit('showrooms')
@@ -68,6 +99,10 @@ Test
 
    function delayedfun(){
         socket.emit('delayed');
+   }
+
+   function imhere(){
+        socket.emit('IMHERE');
    }
 
 </script>
