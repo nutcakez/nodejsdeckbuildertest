@@ -1,13 +1,18 @@
 var express=require("express");
 var app=express();
 var server=require("http").Server(app);
-
+var cardmanager=require('./cards.js');
 app.get("/",function(req,res){
     res.sendFile(__dirname+'/client.html');
 })
 
 server.listen(2000);
 console.log("started the server");
+
+var p1deck=[1,1,3];
+var p2deck=[2,2,2];
+
+console.log(cardmanager.fightcalculating(p1deck,p2deck));
 
 var rooms=[];
 var users=[];
@@ -87,15 +92,17 @@ io.sockets.on('connection',function(socket){
         }
     })
    
+    socket.on('mymessage',function(){
+       io.to(users[1].username).emit('pew')
+    })
+    
 })
 
 
-
-
-
-function CreateGame(username){
+function SendOutCard(cards,user){
 
 }
+
 
 function SendAvailableRooms(socket){
     console.log("Sent available rooms")
@@ -130,12 +137,22 @@ function FindRoom(roomid,roomarray){
 
 function CreateNewRoom(username){
     rooms.push({
-        "roomid":username,
+        "roomid":Math.floor(Math.random() * 100),
         "users":[username],
         "visible":[true],
         "state":'lobby',
         "waiting":[],
-        "responsefrom":[]
+        "responsefrom":[],
+        "P1Deck":[],
+        "P2Deck":[],
+        "P1Gold":10,
+        "P2Gold":10,
+        "P1Hand":[],
+        "P2Hand":[],
+        "P1Used":[],
+        "P2Used":[],
+        "P1Offered":[],
+        "P2Offered":[]
     })
 }
 
@@ -171,7 +188,6 @@ function waitingforresponseortime(){
                 console.log("if is done")
                 clearInterval(myi)
                 resolve("done")
-
             }
         },250)
     })

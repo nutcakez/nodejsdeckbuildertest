@@ -6,6 +6,7 @@ Test
 <button onclick="delayedfun()">Delayed message</button>
 <button onclick="test()">TEST</button>
 <button onclick="changez()"> set promise </button>
+<button onclick="selfmessage()">self message</button>
 <br>
 <button onclick="imhere()">IM HERE</button>
 <textarea id="roomnumber"></textarea>
@@ -30,6 +31,10 @@ Test
     socket.on('rooms',function(data){
         console.log(data);
         DisplayRooms(data);
+    })
+
+    socket.on('pew',function(){
+        console.log('pewpewpew');
     })
 
     socket.on('message',function(data){
@@ -82,6 +87,9 @@ Test
         socket.emit('CreateNewRoom');
     }
 
+    function selfmessage(){
+        socket.emit('mymessage');
+    }
 
 
    function DisplayRooms(roomarray){
