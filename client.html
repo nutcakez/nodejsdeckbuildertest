@@ -75,7 +75,9 @@ Test
         change.value=11;
     }
 
-
+    function SendCardBuyChoise(id){
+        socket.emit('buycard',{'id':id});
+    }
     
     function showrooms(){
         console.log("Button pressed to show rooms")
@@ -93,6 +95,7 @@ Test
 
 
    function DisplayRooms(roomarray){
+       console.log(roomarray)
         $('#rooms').remove();
         $('#playground').append("<div id='rooms'></div)")
         for (var i = roomarray.length - 1; i >= 0; i--) {

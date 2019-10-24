@@ -1,4 +1,5 @@
 var express=require("express");
+var request=require('request');
 var app=express();
 var server=require("http").Server(app);
 var cardmanager=require('./cards.js');
@@ -95,6 +96,10 @@ io.sockets.on('connection',function(socket){
     socket.on('mymessage',function(){
        io.to(users[1].username).emit('pew')
     })
+
+    socket.on('buycard',function(data){
+
+    })
     
 })
 
@@ -136,8 +141,19 @@ function FindRoom(roomid,roomarray){
 
 
 function CreateNewRoom(username){
+    let randomurl='https://www.random.org/strings/?num=1&len=8&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new';
+    let options={
+        host: 'www.google.com',
+        path: '/index.html'
+    }
+    let newroomid;
+    let cucc=request.get(randomurl,function(err,res,body){
+        console.log(body);
+        newroomid=body;
+      });
+    
     rooms.push({
-        "roomid":Math.floor(Math.random() * 100),
+        "roomid":MakeRoomID(),
         "users":[username],
         "visible":[true],
         "state":'lobby',
@@ -192,3 +208,12 @@ function waitingforresponseortime(){
         },250)
     })
 }
+
+function MakeRoomID() {
+    let roomID='';
+    var characters='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for ( var i = 0; i < 10; i++ ) {
+        roomID += characters.charAt(Math.floor(Math.random() * Math.floor(characters.length)));
+    }
+    return roomID;
+ }
