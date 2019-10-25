@@ -1,6 +1,5 @@
 Test
 
-<button onclick="showrooms()">Showrooms</button>
 <button onclick='Createroom()'>Create room</button>
 <button onclick="joinroom()">Join room</button>
 <button onclick="delayedfun()">Delayed message</button>
@@ -77,11 +76,6 @@ Test
 
     function SendCardBuyChoise(id){
         socket.emit('buycard',{'id':id});
-    }
-    
-    function showrooms(){
-        console.log("Button pressed to show rooms")
-        socket.emit('showrooms')
     }
 
     function Createroom(){

@@ -15,8 +15,8 @@ var p2deck=[2,2,2];
 
 console.log(cardmanager.fightcalculating(p1deck,p2deck));
 
-var rooms=[];
-var users=[];
+var rooms={};
+var users={};
 
 var lobbyusers=[];
 var game=[];
@@ -24,40 +24,28 @@ var game=[];
 var io=require('socket.io')(server,{});
 io.sockets.on('connection',function(socket){
     console.log("socket connection "+socket.id);
-    users.push({
-        'username':socket.id,
-        'currentroom':'',
-        'state':'',
-        'roomindex':''
-    });
+    users[socket.id]={'currentroom':''};
+    // users.push({
+    //     'username':socket.id,
+    //     'currentroom':''
+    // });
     SendAvailableRooms(socket);
 
-    socket.on('showrooms',function(){
-        console.log("server got the showrooms message")
-        socket.emit('rooms',rooms);
-        io.sockets.connected[users[0].username].emit('message',{
-            'sender':'server',
-            'message':'testing to send single user'
-        })
-    })
 
 
     socket.on('CreateNewRoom',function(){
         CreateNewRoom(socket.id);
-        console.log(rooms.length);
         SendAvailableRooms(io);
         io.emit('rooms', rooms);
     })
     
     socket.on('joinroom',function(data){
         console.log("receiving joinroom attempt")
-        console.log(rooms.length);
-        console.log("find room outcome: "+FindRoom(data.room,rooms));
-        if(FindRoom(data.room,rooms)>-1){
+        ///if room exists
+        if(rooms.hasOwnProperty(data.room)){
             socket.join(data.room);
-            console.log("this is the index of it "+IndexOfRoom(data.room,rooms));
-            rooms[IndexOfRoom(data.room,rooms)].users.push(socket.id);
-
+            rooms[data.room].users.push(socket.id);
+            console.log('success of join')
         }
         else
         {
@@ -65,13 +53,12 @@ io.sockets.on('connection',function(socket){
         }
         console.log(socket.id+"  user joined this room: "+data.room);
         console.log("current players inside: "+rooms[IndexOfRoom(data.room,rooms)].users)
-        if(rooms[IndexOfRoom(data.room,rooms)].users.length>1){
+        if(rooms[data.room].users.length>1){
                 GameStart();
         }
         else
         {
             console.log("noppeee")
-            rooms[IndexOfRoom(data.room,rooms)].users
         }
     })
 
@@ -117,43 +104,12 @@ function SendAvailableRooms(socket){
 }
 
 
-function IndexOfRoom(roomid,roomarray){
-    for (var i = roomarray.length - 1; i >= 0; i--) {
-        if(roomarray[i].roomid==roomid){
-            return i;
-        }
-    }
-    return -1;
-}
 
-function FindRoom(roomid,roomarray){
-    var idtoreturn=-1;
-    roomarray.forEach(function(item,index){
-        console.log(index+"   "+item.roomid);
-        if(item.roomid==roomid && idtoreturn==-1){
-            console.log("found");
-            idtoreturn=index;
-        }
-    })
-    return idtoreturn;
-}
 
 
 
 function CreateNewRoom(username){
-    let randomurl='https://www.random.org/strings/?num=1&len=8&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new';
-    let options={
-        host: 'www.google.com',
-        path: '/index.html'
-    }
-    let newroomid;
-    let cucc=request.get(randomurl,function(err,res,body){
-        console.log(body);
-        newroomid=body;
-      });
-    
-    rooms.push({
-        "roomid":MakeRoomID(),
+    rooms[MakeRoomID()]={
         "users":[username],
         "visible":[true],
         "state":'lobby',
@@ -169,7 +125,7 @@ function CreateNewRoom(username){
         "P2Used":[],
         "P1Offered":[],
         "P2Offered":[]
-    })
+    }
 }
 
 //first room (0) is the game room
