@@ -42,7 +42,7 @@ Test
     })
 
     socket.on('availablerooms',function(data){
-        DisplayRooms(data.rooms);
+        DisplayRooms(data);
     })
 
     socket.on('delayedmessage',function(){
@@ -92,9 +92,11 @@ Test
        console.log(roomarray)
         $('#rooms').remove();
         $('#playground').append("<div id='rooms'></div)")
-        for (var i = roomarray.length - 1; i >= 0; i--) {
-            $('#rooms').append("<span onclick=joinroom('"+roomarray[i].roomid+"')>"+roomarray[i].roomid+"</span><br>")
-        }
+            Object.keys(roomarray['rooms']).forEach(function(k){
+                console.log('roomidk '+k)
+                $('#rooms').append("<span onclick=joinroom('"+k+"')>"+k+"</span><br>")
+            });    
+        
    }
 
    function joinroom(id){

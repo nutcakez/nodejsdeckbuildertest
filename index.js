@@ -19,7 +19,7 @@ var rooms={};
 var users={};
 
 var lobbyusers=[];
-var game=[];
+var game={};
 
 var io=require('socket.io')(server,{});
 io.sockets.on('connection',function(socket){
@@ -44,17 +44,25 @@ io.sockets.on('connection',function(socket){
         ///if room exists
         if(rooms.hasOwnProperty(data.room)){
             socket.join(data.room);
-            rooms[data.room].users.push(socket.id);
-            console.log('success of join')
+            if(rooms[data.room].users[0]!=socket.id && rooms[data.room].users.length!=2)
+            {
+                rooms[data.room].users.push(socket.id);
+                console.log('success of join')
+            }
+            else
+            {
+                console.log("this user is either in the room or the game has started already")
+            }
+            
         }
         else
         {
             console.log("no such room")
         }
         console.log(socket.id+"  user joined this room: "+data.room);
-        console.log("current players inside: "+rooms[IndexOfRoom(data.room,rooms)].users)
+        //console.log("current players inside: "+rooms[IndexOfRoom(data.room,rooms)].users)
         if(rooms[data.room].users.length>1){
-                GameStart();
+                GameStart(data.room);
         }
         else
         {
@@ -129,9 +137,9 @@ function CreateNewRoom(username){
 }
 
 //first room (0) is the game room
-async function GameStart(){
-    console.log("game started!!- GameStart()")
-    rooms[0].state='ingame';
+async function GameStart(actualRoomID){
+    console.log("game started!!- GameStart()  "+actualRoomID)
+    rooms[actualRoomID].state='ingame';
     let gamestarted=true;
     let wincondition=false;
     let reactionchecker=[];
@@ -139,14 +147,17 @@ async function GameStart(){
     let timer;
     let interval;
     do{
-        await waitingforresponseortime();
+        await waitingforresponseortime(actualRoomID);
         timeover=false;
-        rooms[0].responsefrom=[];
+        //communicate the outcome
+        //communicate the buy choices
+        //wait for the buy choices messages
+        rooms[actualRoomID].responsefrom=[];
         console.log("end of cycle")
     }while(wincondition==false)
 }
 
-function waitingforresponseortime(){
+function waitingforresponseortime(gameroomid){
     console.log("started the function")
     let timer=setTimeout(function(){
             console.log("timer out!")
@@ -156,7 +167,7 @@ function waitingforresponseortime(){
         console.log("in the promisee")
         let myi=setInterval(function(){
             console.log("Cycle")
-            if(timer=="done" || rooms[0].responsefrom.length==2){
+            if(timer=="done" || rooms[gameroomid].responsefrom.length==2){
                 console.log("if is done")
                 clearInterval(myi)
                 resolve("done")
