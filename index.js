@@ -42,6 +42,8 @@ io.sockets.on('connection',function(socket){
     socket.on('joinroom',function(data){
         console.log("receiving joinroom attempt")
         ///if room exists
+        console.log("user ID: "+socket.id)
+        console.log("already in the room: "+ rooms[data.room].users)
         if(rooms.hasOwnProperty(data.room)){
             socket.join(data.room);
             if(rooms[data.room].users[0]!=socket.id && rooms[data.room].users.length!=2)
@@ -62,6 +64,7 @@ io.sockets.on('connection',function(socket){
         console.log(socket.id+"  user joined this room: "+data.room);
         //console.log("current players inside: "+rooms[IndexOfRoom(data.room,rooms)].users)
         if(rooms[data.room].users.length>1){
+                console.log(rooms[data.room].users)
                 GameStart(data.room);
         }
         else

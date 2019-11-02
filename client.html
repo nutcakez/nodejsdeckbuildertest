@@ -10,8 +10,7 @@ Test
 <button onclick="imhere()">IM HERE</button>
 <textarea id="roomnumber"></textarea>
 <div id="playground">
-    <div id="rooms">
-        
+    <div id="rooms">   
     </div>
 </div>
 <div id="gamearea">
@@ -90,12 +89,12 @@ Test
 
    function DisplayRooms(roomarray){
        console.log(roomarray)
-        $('#rooms').remove();
-        $('#playground').append("<div id='rooms'></div)")
-            Object.keys(roomarray['rooms']).forEach(function(k){
-                console.log('roomidk '+k)
-                $('#rooms').append("<span onclick=joinroom('"+k+"')>"+k+"</span><br>")
-            });    
+        //$('#rooms').remove();
+        //$('#playground').append("<div id='rooms'></div)")
+        for (var key in roomarray['rooms']) {
+            console.log('roomidk '+key)
+            $('#rooms').append("<span onclick=joinroom('"+key+"')>"+key+"</span><br>")
+        };    
         
    }
 
