@@ -1,0 +1,14 @@
+Functionaliy:
+  ✔ make 3 card @done(19-10-09 13:43)
+  ✔ fight algorithm without keyword @done(19-10-09 13:43)
+  ✔ client get a deck - card datas on server or on client? @done(19-11-04 12:58)
+
+Room:
+  ✔ Full random room ID @done(19-11-04 12:58)--almost full random
+
+Client side:
+  ☐ Show cards to choose
+  ☐ Send the choosen card
+
+Server side:
+  ☐ Store the shown cards in the json object - to avoid cheating

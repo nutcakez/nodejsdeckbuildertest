@@ -1,10 +1,13 @@
 var express=require("express");
-var request=require('request');
 var app=express();
 var server=require("http").Server(app);
 var cardmanager=require('./cards.js');
 app.get("/",function(req,res){
     res.sendFile(__dirname+'/client.html');
+})
+
+app.get("/style.css",function(req,res){
+    res.sendFile(__dirname+'/style.css');
 })
 
 server.listen(2000);
@@ -14,6 +17,7 @@ var p1deck=[1,1,3];
 var p2deck=[2,2,2];
 
 console.log(cardmanager.fightcalculating(p1deck,p2deck));
+console.log(cardmanager.buyroundcards())
 
 var rooms={};
 var users={};
@@ -61,7 +65,7 @@ io.sockets.on('connection',function(socket){
         {
             console.log("no such room")
         }
-        console.log(socket.id+"  user joined this room: "+data.room);
+        //console.log(socket.id+"  user joined this room: "+data.room);
         //console.log("current players inside: "+rooms[IndexOfRoom(data.room,rooms)].users)
         if(rooms[data.room].users.length>1){
                 console.log(rooms[data.room].users)
@@ -69,7 +73,7 @@ io.sockets.on('connection',function(socket){
         }
         else
         {
-            console.log("noppeee")
+            console.log("Not starting the game")
         }
     })
 

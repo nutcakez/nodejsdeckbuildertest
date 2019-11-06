@@ -1,21 +1,33 @@
 let Cards={
-    1:{
+    0:{
         'name':'Húsos nagydarab',
         'life':5,
         'attack':3,
         'cost':5
     },
-    2:{
+    1:{
         'name':'Gyilkos kenyér',
         'life':2,
         'attack':1,
         'cost':0
     },
-    3:{
+    2:{
         'name':'Tüskés hordó',
         'life':4,
         'attack':1,
         'cost':2
+    },
+    3:{
+        'name':'jolly joker',
+        'life':3,
+        'attack':3,
+        'cost':1
+    },
+    4:{
+        'name':'harci szekerce',
+        'life':0,
+        'attack':5,
+        'cost':3
     }
 }
 
@@ -43,7 +55,15 @@ exports.fightcalculating=(p1cards,p2cards)=>{
         'p1':Math.abs(p1life-p2fight),
         'p2':Math.abs(p2life-p1life)
     }
+}
 
-
-
+exports.buyroundcards=()=>{
+    let returnedcards=[];
+    let size = Object.keys(Cards).length;
+    for(let i=0;i<3;i++){
+        returnedcards.push(Math.floor(Math.random() * size))
+    }
+    console.log(returnedcards)
+    console.log(size)
+    return returnedcards
 }

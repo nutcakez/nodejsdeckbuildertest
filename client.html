@@ -1,5 +1,3 @@
-Test
-
 <button onclick='Createroom()'>Create room</button>
 <button onclick="joinroom()">Join room</button>
 <button onclick="delayedfun()">Delayed message</button>
@@ -17,6 +15,7 @@ Test
     <button>1</button>
     <button>2</button>
 </div>
+<link rel="stylesheet"  href="style.css">
 <script
   src="https://code.jquery.com/jquery-3.4.1.js"
   integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
@@ -26,10 +25,10 @@ Test
     var socket=io();
 
 
-    socket.on('rooms',function(data){
-        console.log(data);
-        DisplayRooms(data);
-    })
+    // socket.on('rooms',function(data){
+    //     console.log(data);
+    //     DisplayRooms(data);
+    // })
 
     socket.on('pew',function(){
         console.log('pewpewpew');
@@ -47,31 +46,31 @@ Test
     socket.on('delayedmessage',function(){
         alert("megy a delay!")
     })
-    let promise1;
-    async function test(){
-        var message=await setpromise();
-        console.log(message);
-    }
+    // let promise1;
+    // async function test(){
+    //     var message=await setpromise();
+    //     console.log(message);
+    // }
    
-    change={
-        value:10,
-        valuelistener:function(val){},
-        set value(val){
-            this.value=val;
-            this.valuelistener(val);
-        },
-        get value(){
-            return this.value;
-        },
-        registerListener:function(listener){
-            this.valuelistener=listener;
-        }
-    }
+    // change={
+    //     value:10,
+    //     valuelistener:function(val){},
+    //     set value(val){
+    //         this.value=val;
+    //         this.valuelistener(val);
+    //     },
+    //     get value(){
+    //         return this.value;
+    //     },
+    //     registerListener:function(listener){
+    //         this.valuelistener=listener;
+    //     }
+    // }
 
     
-    function changez(){
-        change.value=11;
-    }
+    // function changez(){
+    //     change.value=11;
+    // }
 
     function SendCardBuyChoise(id){
         socket.emit('buycard',{'id':id});
@@ -89,8 +88,9 @@ Test
 
    function DisplayRooms(roomarray){
        console.log(roomarray)
-        //$('#rooms').remove();
-        //$('#playground').append("<div id='rooms'></div)")
+        $('#rooms').remove();
+        $('#playground').append("<div id='rooms'></div)")
+        console.log("starting for")
         for (var key in roomarray['rooms']) {
             console.log('roomidk '+key)
             $('#rooms').append("<span onclick=joinroom('"+key+"')>"+key+"</span><br>")
