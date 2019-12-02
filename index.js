@@ -24,10 +24,14 @@ var users={};
 
 var lobbyusers=[];
 var game={};
+//v lookup on the customer
+//pop up 
 
+//Range("C2490").Value = Application.WorksheetFunction.VLookup(Range("A2490"), Range("A1: C2488"), 3, 0)
 var io=require('socket.io')(server,{});
 io.sockets.on('connection',function(socket){
     console.log("socket connection "+socket.id);
+    socket.emit('connected',"alma");
     users[socket.id]={'currentroom':''};
     // users.push({
     //     'username':socket.id,
@@ -36,13 +40,18 @@ io.sockets.on('connection',function(socket){
     SendAvailableRooms(socket);
 
 
-
+    //create room
     socket.on('CreateNewRoom',function(){
-        CreateNewRoom(socket.id);
-        SendAvailableRooms(io);
-        io.emit('rooms', rooms);
+        if(notinanyroom(socket.id)){
+            CreateNewRoom(socket.id);
+            SendAvailableRooms(io);
+            io.emit('rooms', rooms);
+        }else{
+            console.log("already in a room, cant create another")
+        }
     })
     
+    //join room
     socket.on('joinroom',function(data){
         console.log("receiving joinroom attempt")
         ///if room exists
@@ -59,7 +68,6 @@ io.sockets.on('connection',function(socket){
             {
                 console.log("this user is either in the room or the game has started already")
             }
-            
         }
         else
         {
@@ -77,28 +85,8 @@ io.sockets.on('connection',function(socket){
         }
     })
 
-    socket.on('delayed',function(){
-        var t=setTimeout(function(){
-            io.emit('delayedmessage','potato');
-        }, 3500);
-    })
 
-    socket.on('IMHERE',function(){
-        if(rooms[0].responsefrom.length==0){
-            rooms[0].responsefrom.push(socket.id);
-        }
-        else
-        {
-            if(rooms[0].responsefrom.length==1 && rooms[0].responsefrom[0]!=socket.id){
-                rooms[0].responsefrom.push(socket.id);
-            }
-        }
-    })
-   
-    socket.on('mymessage',function(){
-       io.to(users[1].username).emit('pew')
-    })
-
+    //buy the card
     socket.on('buycard',function(data){
 
     })
@@ -190,4 +178,8 @@ function MakeRoomID() {
         roomID += characters.charAt(Math.floor(Math.random() * Math.floor(characters.length)));
     }
     return roomID;
+ }
+
+ function notinanyroom(socketid){
+
  }
