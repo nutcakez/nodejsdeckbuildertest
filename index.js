@@ -29,6 +29,8 @@ var game={};
 
 //Range("C2490").Value = Application.WorksheetFunction.VLookup(Range("A2490"), Range("A1: C2488"), 3, 0)
 var io=require('socket.io')(server,{});
+
+//connecting to server
 io.sockets.on('connection',function(socket){
     console.log("socket connection "+socket.id);
     socket.emit('connected',"alma");
@@ -62,6 +64,8 @@ io.sockets.on('connection',function(socket){
             if(rooms[data.room].users[0]!=socket.id && rooms[data.room].users.length!=2)
             {
                 rooms[data.room].users.push(socket.id);
+                users[socket.id].currentroom=data.room
+                AddToRoom(data.room,socket.id)
                 console.log('success of join')
             }
             else
@@ -90,7 +94,14 @@ io.sockets.on('connection',function(socket){
     socket.on('buycard',function(data){
 
     })
-    
+    socket.on('IMHERE',function(data){
+        rooms[users[socket.id].currentroom].responsefrom.push(socket.id)
+        rooms[users[socket.id].currentroom][socket.id]['responsefrom']=data
+        console.log(rooms)
+        console.log(users)
+        console.log(users[socket.id].currentroom)
+        
+    })
 })
 
 
@@ -112,23 +123,17 @@ function SendAvailableRooms(socket){
 
 
 function CreateNewRoom(username){
-    rooms[MakeRoomID()]={
+    let newroomID=MakeRoomID()
+    rooms[newroomID]={
         "users":[username],
         "visible":[true],
         "state":'lobby',
         "waiting":[],
-        "responsefrom":[],
-        "P1Deck":[],
-        "P2Deck":[],
-        "P1Gold":10,
-        "P2Gold":10,
-        "P1Hand":[],
-        "P2Hand":[],
-        "P1Used":[],
-        "P2Used":[],
-        "P1Offered":[],
-        "P2Offered":[]
+        "responsefrom":[]        
     }
+    users[username].currentroom=newroomID
+    AddToRoom(newroomID,username)
+    
 }
 
 //first room (0) is the game room
@@ -147,9 +152,27 @@ async function GameStart(actualRoomID){
         //communicate the outcome
         //communicate the buy choices
         //wait for the buy choices messages
+
+        //DUMMY WINNER STUFF
+        for(let i=0;i<rooms[actualRoomID].users.length;i++){
+            if(rooms[actualRoomID].users[i].responsefrom==''){
+                rooms[actualRoomID].users[i].responsefrom=0
+            }
+        }
+        if(rooms[actualRoomID][rooms[actualRoomID].users[0]].responsefrom>rooms[actualRoomID][rooms[actualRoomID].users[1]].responsefrom){
+            console.log("The winner is : "+rooms[actualRoomID]['users'][0])
+        }else{
+            if(rooms[actualRoomID][rooms[actualRoomID].users[0]].responsefrom==rooms[actualRoomID][rooms[actualRoomID].users[1]].responsefrom){
+                console.log("-------------- DRAW")
+            }else{
+                console.log("The winner is : "+rooms[actualRoomID]['users'][1])
+            }
+        }
+        
+
         rooms[actualRoomID].responsefrom=[];
         console.log("end of cycle")
-    }while(wincondition==false)
+    }while(wincondition==true)
 }
 
 function waitingforresponseortime(gameroomid){
@@ -157,14 +180,14 @@ function waitingforresponseortime(gameroomid){
     let timer=setTimeout(function(){
             console.log("timer out!")
             timer="done";
-        },6000);
+        },5990);
     return new Promise(resolve=>{
         console.log("in the promisee")
         let myi=setInterval(function(){
-            console.log("Cycle")
+            console.log("response from: "+rooms[gameroomid].responsefrom.length)
             if(timer=="done" || rooms[gameroomid].responsefrom.length==2){
-                console.log("if is done")
                 clearInterval(myi)
+                clearTimeout(timer);
                 resolve("done")
             }
         },250)
@@ -178,8 +201,23 @@ function MakeRoomID() {
         roomID += characters.charAt(Math.floor(Math.random() * Math.floor(characters.length)));
     }
     return roomID;
- }
+}
 
- function notinanyroom(socketid){
+function notinanyroom(socketid){
+    if(users[socketid].currentroom==''){
+        return true
+    }else{
+        return false
+    }
+}
 
- }
+function AddToRoom(room,userid){
+    rooms[room][userid]={
+        "response":'',
+        "Deck":[],
+        "Gold":10,
+        "Hand":[],
+        "Used":[],
+        "Offered":[]
+    }
+}

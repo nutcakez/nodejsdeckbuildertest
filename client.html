@@ -5,7 +5,10 @@
 <button onclick="changez()"> set promise </button>
 <button onclick="selfmessage()">self message</button>
 <br>
-<button onclick="imhere()">IM HERE</button>
+<button onclick="imhere(1)">1</button>
+<button onclick="imhere(2)">2</button>
+<button onclick="imhere(3)">3</button>
+<button onclick="imhere(4)">4</button>
 <textarea id="roomnumber"></textarea>
 <div id="playground">
     <div id="rooms">   
@@ -15,6 +18,7 @@
     <button>1</button>
     <button>2</button>
 </div>
+<label id="myid"></label>
 <link rel="stylesheet"  href="style.css">
 <script
   src="https://code.jquery.com/jquery-3.4.1.js"
@@ -26,6 +30,10 @@
 
     socket.on('availablerooms',function(data){
         DisplayRooms(data);
+    })
+
+    socket.on('ownID',function(data){
+        $('#')
     })
 
  
@@ -90,8 +98,8 @@
         socket.emit('delayed');
    }
 
-   function imhere(){
-        socket.emit('IMHERE');
+   function imhere(value){
+        socket.emit('IMHERE',value);
    }
 
 </script>

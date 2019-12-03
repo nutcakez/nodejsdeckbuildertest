@@ -67,3 +67,11 @@ exports.buyroundcards=()=>{
     console.log(size)
     return returnedcards
 }
+
+exports.initializeDeck=()=>{
+    let basicDeck=[];
+    for(let i=0;i<5;i++){
+        basicDeck.push(1)
+    }
+    return basicDeck;
+}
