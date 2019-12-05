@@ -4,21 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nutcakez/nodejsdeckbuildertest.git"
+    "test": "jasmine"
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/nutcakez/nodejsdeckbuildertest/issues"
-  },
-  "homepage": "https://github.com/nutcakez/nodejsdeckbuildertest#readme",
   "dependencies": {
+    "@angular/cli": "^8.3.19",
+    "eslint": "^6.5.1",
     "express": "^4.17.1",
-    "request": "^2.88.0",
-    "socketio": "^1.0.0"
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "jasmine": "^3.5.0"
   }
 }

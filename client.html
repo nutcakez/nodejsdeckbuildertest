@@ -82,9 +82,9 @@
         $('#rooms').remove();
         $('#playground').append("<div id='rooms'></div)")
         console.log("starting for")
-        for (var key in roomarray['rooms']) {
-            console.log('roomidk '+key)
-            $('#rooms').append("<span onclick=joinroom('"+key+"')>"+key+"</span><br>")
+        for (let i=0;i<roomarray.rooms.length;i++) {
+            console.log('roomid --- '+roomarray.rooms[i])
+            $('#rooms').append("<span onclick=joinroom('"+roomarray.rooms[i]+"')>"+roomarray.rooms[i]+"</span><br>")
         };    
         
    }

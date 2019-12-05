@@ -12,3 +12,6 @@ Client side:
 
 Server side:
   ☐ Store the shown cards in the json object - to avoid cheating
+  ✔ Have a starting deck for each player @done(19-12-05 13:51)
+  ☐ Have a starting/non-starting hand for each player 
+  ☐ Send out starting hand

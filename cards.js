@@ -75,3 +75,40 @@ exports.initializeDeck=()=>{
     }
     return basicDeck;
 }
+
+//TODO
+exports.choiceCards=(remainingdeck,useddeck)=>{
+
+}
+
+//returns deck - graveyard - hand 
+exports.getHand=(hand,deck,graveyard)=>{
+    for(let i=0;i<hand.length;i++){
+        graveyard.push(hand.pop())
+    }
+    while(hand.length!=3){
+        if(deck.length>0){
+            hand.push(deck.pop())
+        }
+        else{
+            deck=graveyard.slice()
+            graveyard=[]
+        }
+    }
+    return {'hand':hand,
+            'deck':deck,
+            'graveyard':graveyard}
+}
+
+function deckshuffle(deck){
+    console.log("original deck:  "+deck)
+    for (let i = deck.length - 1; i > 0; i--) {
+        let temp;
+        let j = Math.floor(Math.random() * (i + 1))
+        temp=deck[i]
+        deck[i]=deck[j]
+        deck[j]=temp
+    }
+    console.log("shuffled deck: "+deck)
+    return deck
+}

@@ -111,9 +111,13 @@ function SendOutCard(cards,user){
 
 
 function SendAvailableRooms(socket){
+    let roomsend=[];
+    for(key in rooms){
+        roomsend.push(key)
+    }
     console.log("Sent available rooms")
     socket.emit('availablerooms',{
-        'rooms':rooms
+        'rooms':roomsend
     })
 }
 
@@ -140,6 +144,9 @@ function CreateNewRoom(username){
 async function GameStart(actualRoomID){
     console.log("game started!!- GameStart()  "+actualRoomID)
     rooms[actualRoomID].state='ingame';
+    //init starting deck
+    initStartingDeck(actualRoomID)
+    getNewHand(actualRoomID)
     let gamestarted=true;
     let wincondition=false;
     let reactionchecker=[];
@@ -176,7 +183,6 @@ async function GameStart(actualRoomID){
 }
 
 function waitingforresponseortime(gameroomid){
-    console.log("started the function")
     let timer=setTimeout(function(){
             console.log("timer out!")
             timer="done";
@@ -190,7 +196,7 @@ function waitingforresponseortime(gameroomid){
                 clearTimeout(timer);
                 resolve("done")
             }
-        },250)
+        },1000)
     })
 }
 
@@ -217,7 +223,28 @@ function AddToRoom(room,userid){
         "Deck":[],
         "Gold":10,
         "Hand":[],
-        "Used":[],
+        "Graveyard":[],
         "Offered":[]
     }
+}
+
+function getNewHand(roomID){
+    console.log(rooms[roomID])
+    rooms[roomID].users.forEach(player => {
+        console.log(player)
+        let handdeckgraveyard=cardmanager.getHand(rooms[roomID][player].Hand,rooms[roomID][player].Deck,rooms[roomID][player].Graveyard)
+        rooms[roomID][player].Hand=handdeckgraveyard.hand
+        rooms[roomID][player].Deck=handdeckgraveyard.deck
+        rooms[roomID][player].Graveyard=handdeckgraveyard.graveyard
+    });
+    console.log("-------------------- USER STAT")
+    console.log(rooms[roomID])
+}
+
+function initStartingDeck(roomID){
+    console.log("Starting deck init for each player")
+    rooms[roomID].users.forEach(player => {
+        rooms[roomID][player].Deck=cardmanager.initializeDeck()
+        console.log("a deck "+rooms[roomID][player].Deck)
+    });
 }
