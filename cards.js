@@ -8,7 +8,7 @@ let Cards={
     1:{
         'name':'Gyilkos kenyér',
         'life':2,
-        'attack':1,
+        'attack':6,
         'cost':0
     },
     2:{
@@ -37,23 +37,38 @@ exports.fightcalculating=(p1cards,p2cards)=>{
     let p1life=0;
     let p2life=0;
 
+    let p1HpLoss=0;
+    let p2HpLoss=0;
+
     p1cards.forEach(card => {
         p1fight=p1fight+Cards[card]['attack'];
         p1life=p1life+Cards[card]['life'];
-        console.log("----"+Cards[card]['life'])
     });
 
     p2cards.forEach(card => {
         p2fight=p2fight+Cards[card]['attack'];
         p2life=p2life+Cards[card]['life'];
     });
-    console.log('p1fight '+p1fight)
-    console.log('p2fight '+p2fight)
-    console.log('p1life '+p1life)
-    console.log('p2life '+p2life)
+
+    if(p1life-p2fight<0){
+        p1HpLoss=Math.abs(p1life-p2fight)
+    }
+    if(p2life-p1fight<0){
+        p2HpLoss=Math.abs(p2life-p1fight)
+    }
+    console.log("HP loss of player1: "+p1HpLoss)
+    console.log("Hp loss of player2: "+p2HpLoss)
     return {
-        'p1':Math.abs(p1life-p2fight),
-        'p2':Math.abs(p2life-p1life)
+        'p1':{
+            'lifeloss':p1HpLoss,
+            'attack':p1fight,
+            'defense':p1life
+        },
+        'p2':{
+            'lifeloss':p2HpLoss,
+            'attack':p2fight,
+            'defense':p2life
+        }
     }
 }
 
@@ -70,9 +85,13 @@ exports.buyroundcards=()=>{
 
 exports.initializeDeck=()=>{
     let basicDeck=[];
-    for(let i=0;i<5;i++){
+    for(let i=0;i<3;i++){
         basicDeck.push(1)
     }
+    for(let i=0;i<3;i++){
+        basicDeck.push(2)
+    }
+    basicdeck=deckshuffle(basicDeck)
     return basicDeck;
 }
 
@@ -99,6 +118,8 @@ exports.getHand=(hand,deck,graveyard)=>{
             'deck':deck,
             'graveyard':graveyard}
 }
+
+exports.Cards=Cards;
 
 function deckshuffle(deck){
     console.log("original deck:  "+deck)

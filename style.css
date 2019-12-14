@@ -2,3 +2,39 @@
     height:400px;
     width : 400px;
 }
+
+
+
+
+.gameboard{
+    width: 80%;
+    height: 60%;
+    margin: 0 auto;
+    background-color: lightslategray;
+}
+
+
+
+
+.cardcontent{margin: auto; /* Important */ 
+    text-align: center; 
+}
+
+.cardcard{
+    float:left;
+    margin:auto;
+}
+
+.card{
+    background-color: blueviolet;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+    padding: 10px 0px;
+    float:left;
+    border:5px solid yellow;
+    margin:10px;
+}
+p{
+    margin:0;
+}

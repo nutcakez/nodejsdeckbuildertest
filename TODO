@@ -7,11 +7,12 @@ Room:
   ✔ Full random room ID @done(19-11-04 12:58)--almost full random
 
 Client side:
-  ☐ Show cards to choose
+  ✔ Show cards to choose @done(19-12-12 07:35)
   ☐ Send the choosen card
 
 Server side:
   ☐ Store the shown cards in the json object - to avoid cheating
   ✔ Have a starting deck for each player @done(19-12-05 13:51)
-  ☐ Have a starting/non-starting hand for each player 
-  ☐ Send out starting hand
+  ✔ Have a starting/non-starting hand for each player @done(19-12-12 07:35)
+  ✔ Send out starting hand @done(19-12-12 07:35)
+  ☐ Handle multiple input send response from the user

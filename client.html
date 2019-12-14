@@ -1,3 +1,4 @@
+<div id="lobby">
 <button onclick='Createroom()'>Create room</button>
 <button onclick="joinroom()">Join room</button>
 <button onclick="delayedfun()">Delayed message</button>
@@ -5,21 +6,28 @@
 <button onclick="changez()"> set promise </button>
 <button onclick="selfmessage()">self message</button>
 <br>
-<button onclick="imhere(1)">1</button>
-<button onclick="imhere(2)">2</button>
-<button onclick="imhere(3)">3</button>
-<button onclick="imhere(4)">4</button>
-<textarea id="roomnumber"></textarea>
 <div id="playground">
     <div id="rooms">   
     </div>
 </div>
-<div id="gamearea">
-    <button>1</button>
-    <button>2</button>
 </div>
+
+<div class="gameboard">
+    <div id="card0" class="card" onclick="cardclick(0)">
+    </div>
+    <div id="card1" class="card" onclick="cardclick(1)">
+    </div>
+    <div id="card2" class="card" onclick="cardclick(2)"></div><br>
+    <button id="responsebutton" onclick="sendresponse()">Send response</button>
+</div>
+
+<h2 id="timer"></h2>
+<h2 id="gold">Gold: </h2>
+<h2 id="life">Life: </h2>
+
 <label id="myid"></label>
 <link rel="stylesheet"  href="style.css">
+<script src="clientcards.js"></script>
 <script
   src="https://code.jquery.com/jquery-3.4.1.js"
   integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
@@ -27,42 +35,41 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 <script>
     var socket=io();
-
+    let timercontroll;
+    let selected=[];
+    let sentData=[];
+    let gold=10;
+    let life=20;
+    let enemy1life=20;
+    let enemy1gold=10;
     socket.on('availablerooms',function(data){
         DisplayRooms(data);
     })
 
     socket.on('ownID',function(data){
-        $('#')
+        alert(data)
     })
 
+    socket.on('hand',function(data){
+        selected=[]
+        sentData=data
+        $('#lobby').hide();
+        for(let i=0;i<data.length;i++){
+            $('#card'+i).append("<p>"+Cards[data[i]].name+"</p><p>Cost: "+Cards[data[i]].cost+"</p><p>Attack: "+Cards[data[i]].attack+"</p><p>Life : "+Cards[data[i]].life+"</p>")
+        }
+        $('#timer').text(6)
+        timercontroll=setInterval(TimerCountdown, 1000);
+    })
+
+    //restart the state
+    socket.on('gamestart',function(){
+        gold=10;
+        life=20;
+        $('#gold').html("Gold: "+gold)
+        $('#life').html("Life: "+life)
+    })
  
-    // let promise1;
-    // async function test(){
-    //     var message=await setpromise();
-    //     console.log(message);
-    // }
    
-    // change={
-    //     value:10,
-    //     valuelistener:function(val){},
-    //     set value(val){
-    //         this.value=val;
-    //         this.valuelistener(val);
-    //     },
-    //     get value(){
-    //         return this.value;
-    //     },
-    //     registerListener:function(listener){
-    //         this.valuelistener=listener;
-    //     }
-    // }
-
-    
-    // function changez(){
-    //     change.value=11;
-    // }
-
     function SendCardBuyChoise(id){
         socket.emit('buycard',{'id':id});
     }
@@ -73,6 +80,7 @@
     }
 
     function selfmessage(){
+        alert(Cards[0].name)
         socket.emit('mymessage');
     }
 
@@ -98,8 +106,49 @@
         socket.emit('delayed');
    }
 
-   function imhere(value){
-        socket.emit('IMHERE',value);
+   function response(value){
+        socket.emit('response',value);
    }
 
+   function cardclick(clickedcard){
+       if($('#card'+clickedcard).css("background-color")=="rgb(138, 43, 226)"){
+           selected.push(clickedcard)
+           console.log(selected)
+           $('#card'+clickedcard).css("background-color","green")
+           if(gold>=Cards[sentData[clickedcard]].cost){
+               gold=gold-Cards[sentData[clickedcard]].cost
+               $('#gold').html("Gold: "+gold)
+           }
+           else
+           {
+              $('#card'+clickedcard).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100)
+           }
+       }else{
+           $('#card'+clickedcard).css("background-color","rgb(138, 43, 226)")
+           for(let i=0;i<selected.length;i++){
+               if(selected[i]==clickedcard){
+                   selected.splice(i,1)
+                   console.log(selected)
+                   break;
+               }
+           }
+            gold=gold+Cards[sentData[clickedcard]].cost
+            $('#gold').html("Gold: "+gold)
+       }
+       
+   }
+
+   function TimerCountdown(){
+       let currentNumber=$('#timer').text()
+       $('#timer').text(currentNumber-1)
+       if(currentNumber-1==0){
+            clearInterval(timercontroll)
+            socket.emit('response',selected)
+       }    
+   }
+
+   function sendresponse(){
+       clearInterval(timercontroll)
+       socket.emit('response',selected)
+   }
 </script>
