@@ -1,5 +1,6 @@
 
 package-lock.json
+node_modules/
 node_modules/yeast/README.md
 node_modules/yeast/package.json
 node_modules/yeast/LICENSE
