@@ -35,6 +35,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 <script>
     var socket=io();
+    let id;
     let timercontroll;
     let selected=[];
     let sentData=[];
@@ -69,6 +70,9 @@
         $('#life').html("Life: "+life)
     })
  
+    socket.on('connected',function(data){
+        id=data;
+    })
    
     function SendCardBuyChoise(id){
         socket.emit('buycard',{'id':id});

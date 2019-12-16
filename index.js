@@ -33,7 +33,7 @@ var io=require('socket.io')(server,{});
 //connecting to server
 io.sockets.on('connection',function(socket){
     console.log("socket connection "+socket.id);
-    socket.emit('connected',"alma");
+    socket.emit('connected',socket.id);
     users[socket.id]={'currentroom':''};
     // users.push({
     //     'username':socket.id,
@@ -54,7 +54,6 @@ io.sockets.on('connection',function(socket){
     
     //join room
     socket.on('joinroom',function(data){
-        console.log("receiving joinroom attempt")
         ///if room exists
         console.log("user ID: "+socket.id)
         if(rooms.hasOwnProperty(data.room)){
@@ -79,6 +78,7 @@ io.sockets.on('connection',function(socket){
         //console.log("current players inside: "+rooms[IndexOfRoom(data.room,rooms)].users)
         if(rooms[data.room].users.length>1){
                 console.log(rooms[data.room].users)
+                rooms[data.room].visible=false;
                 GameStart(data.room);
         }
         else
@@ -107,9 +107,11 @@ io.sockets.on('connection',function(socket){
 function SendAvailableRooms(socket){
     let roomsend=[];
     for(key in rooms){
-        roomsend.push(key)
+        if(rooms[key].visible==true)
+        {
+            roomsend.push(key)
+        }
     }
-    console.log("Sent available rooms")
     socket.emit('availablerooms',{
         'rooms':roomsend
     })
