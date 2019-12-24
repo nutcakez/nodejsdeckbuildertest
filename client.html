@@ -3,6 +3,7 @@
 <button onclick="joinroom()">Join room</button>
 <button onclick="delayedfun()">Delayed message</button>
 <button onclick="test()">TEST</button>
+<button onclick="removeanim()">removeanim</button>
 <button onclick="changez()"> set promise </button>
 <button onclick="selfmessage()">self message</button>
 <br>
@@ -11,7 +12,7 @@
     </div>
 </div>
 </div>
-
+<div id="teststuff"></div id="teststuff">
 <div class="gameboard">
     <div id="card0" class="card" onclick="cardclick(0)">
     </div>
@@ -88,6 +89,13 @@
         socket.emit('mymessage');
     }
 
+    function test(){
+        $('#teststuff').addClass('anim')
+    }
+
+    function removeanim(){
+        $('#teststuff').removeClass('anim')
+    }
 
    function DisplayRooms(roomarray){
        console.log(roomarray)

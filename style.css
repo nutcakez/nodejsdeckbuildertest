@@ -14,9 +14,16 @@
 }
 
 
+#teststuff{
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: green;
+    -webkit-transition: -webkit-transform 2s ease-in-out;
+}
 
-
-.cardcontent{margin: auto; /* Important */ 
+.cardcontent{
+    margin: auto; /* Important */ 
     text-align: center; 
 }
 
@@ -24,6 +31,20 @@
     float:left;
     margin:auto;
 }
+
+.stuff{
+    -webkit-transition: -webkit-transform 2s ease-in-out;
+}
+
+.anim{
+    -webkit-transform:translate(50px,50px);
+}
+
+.animback{
+    -webkit-transform:translate(0px,0px)
+}
+
+
 
 .card{
     background-color: blueviolet;
