@@ -111,6 +111,7 @@ exports.getHand=(hand,deck,graveyard)=>{
         }
         else{
             deck=graveyard.slice()
+            deck=deckshuffle(deck)
             graveyard=[]
         }
     }
@@ -132,4 +133,16 @@ function deckshuffle(deck){
     }
     console.log("shuffled deck: "+deck)
     return deck
+}
+
+exports.UpdateHDG=function(hand,deck,graveyard){
+    for(let i=0;i<hand.length+1;i++){
+        graveyard.push(hand.pop())
+    }
+
+    return{
+        'Hand':hand,
+        'Deck':deck,
+        'Graveyard':graveyard
+    }
 }

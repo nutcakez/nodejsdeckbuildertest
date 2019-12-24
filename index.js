@@ -126,7 +126,7 @@ function CreateNewRoom(username){
     let newroomID=MakeRoomID()
     rooms[newroomID]={
         "users":[username],
-        "visible":[true],
+        "visible":true,
         "state":'lobby',
         "waiting":[],
         "responsefrom":[]        
@@ -164,12 +164,16 @@ async function GameStart(actualRoomID){
         //calculate outcome/update status/return info to player
         CalculateFight(actualRoomID)
 
+        //update hand and graveyard
+        UpdateHandGraveyard(actualRoomID)
+        
         //communicate the outcome
         StatusUpdate(actualRoomID)
-
         
         //communicate the buy choices
-        //wait for the buy choices messages
+        CardBuy(actualRoomID)
+
+        //wait for buy choices responses
             
 
 
@@ -256,10 +260,8 @@ function getNewHand(roomID){
 }
 
 function initStartingDeck(roomID){
-    console.log("Starting deck init for each player")
     rooms[roomID].users.forEach(player => {
         rooms[roomID][player].Deck=cardmanager.initializeDeck()
-        console.log("a deck "+rooms[roomID][player].Deck)
     });
 }
 
@@ -269,7 +271,6 @@ function SendOutHand(actualRoomID){
 
 function SendGameStart(gameroomid){
     rooms[gameroomid].users.forEach(player => {
-        console.log(`player to send: ${player}`)
         io.to(player).emit('gamestart')
     });
 }
@@ -302,11 +303,19 @@ function CalculateFight(roomID){
 }
 
 function StatusUpdate(roomID){
+    let gamestatus={}
     rooms[roomID].users.forEach(userid => {
-        io.to(userid).emit('status',{
-
-        })
+        console.log(rooms[roomID][userid])
+        gamestatus[userid]={
+            'Life':rooms[roomID][userid].Life,
+            'Gold':rooms[roomID][userid].Gold,
+            'Deck':rooms[roomID][userid].Deck.length,
+            'Graveyard':rooms[roomID][userid].Graveyard.length
+        }
     });
+    rooms[roomID].users.forEach(userid=>{
+        io.to(userid).emit('status',gamestatus)
+    })
 }
 
 function ValidateResponse(roomID){
@@ -343,4 +352,22 @@ function ValidateResponse(roomID){
         console.log("p2 basic gold "+rooms[roomID][p2id].Gold)
         rooms[roomID][p2id].Gold=rooms[roomID][p2id].Gold-sum
     }
+}
+
+function UpdateHandGraveyard(roomID){
+    console.log("starting hdg")
+    rooms[roomID].users.forEach(userID => {
+        let updatedstatus=cardmanager.UpdateHDG(rooms[roomID][userID].Hand,rooms[roomID][userID].Deck,rooms[roomID][userID].Graveyard)
+        rooms[roomID][userID].Hand=updatedstatus.Hand
+        rooms[roomID][userID].Deck=updatedstatus.Deck
+        rooms[roomID][userID].Graveyard=updatedstatus.Graveyard
+    });
+}
+
+function CardBuy(roomID){
+    rooms[roomID].users.forEach(playerid => {
+        rooms[roomID][playerid].Offered=cardmanager.buyroundcards()
+        console.log(rooms[roomID][playerid].Offered)
+        io.to(playerid).emit('buyround',rooms[roomID][playerid].Offered)
+    });
 }

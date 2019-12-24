@@ -1,7 +1,6 @@
 <div id="lobby">
 <button onclick='Createroom()'>Create room</button>
 <button onclick="joinroom()">Join room</button>
-<button onclick="delayedfun()">Delayed message</button>
 <button onclick="test()">TEST</button>
 <button onclick="changez()"> set promise </button>
 <button onclick="selfmessage()">self message</button>
@@ -13,11 +12,14 @@
 </div>
 
 <div class="gameboard">
-    <div id="card0" class="card" onclick="cardclick(0)">
+    <div id="card0" class="cards" onclick="cardclick(0)">
     </div>
-    <div id="card1" class="card" onclick="cardclick(1)">
+    <div id="card1" class="cards" onclick="cardclick(1)">
     </div>
-    <div id="card2" class="card" onclick="cardclick(2)"></div><br>
+    <div id="card2" class="cards" onclick="cardclick(2)"></div>
+    <div id="buy0" class="buycard"></div>
+    <div id="buy1" class="buycard"></div>
+    <div id="buy2" class="buycard"></div>
     <button id="responsebutton" onclick="sendresponse()">Send response</button>
 </div>
 
@@ -26,14 +28,19 @@
 <h2 id="life">Life: </h2>
 
 <label id="myid"></label>
-<link rel="stylesheet"  href="style.css">
+
+
 <script src="clientcards.js"></script>
 <script
   src="https://code.jquery.com/jquery-3.4.1.js"
   integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
   crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+<link rel="stylesheet"  href="style.css">
 <script>
+    $(function(){
+        
+    })
     var socket=io();
     let id;
     let timercontroll;
@@ -62,6 +69,16 @@
         timercontroll=setInterval(TimerCountdown, 1000);
     })
 
+
+    socket.on('buyround',function(data){
+        for(let i=0;i<data.length;i++){
+            $('#buy'+i).append("<p>"+Cards[data[i]].name+"</p><p>Cost: "+Cards[data[i]].cost+"</p><p>Attack: "+Cards[data[i]].attack+"</p><p>Life : "+Cards[data[i]].life+"</p>")
+        }
+        $('.cards').slideUp(1000,function(){
+            $('.buycard').slideDown(1000)
+        })
+    })
+
     //restart the state
     socket.on('gamestart',function(){
         gold=10;
@@ -74,9 +91,11 @@
         id=data;
     })
    
-    function SendCardBuyChoise(id){
-        socket.emit('buycard',{'id':id});
-    }
+    socket.on('status',function(data){
+        console.log(data)
+    })
+
+
 
     function Createroom(){
         console.log("Create room pressed");
@@ -101,14 +120,16 @@
         
    }
 
+   function test(){
+       $('.cards').hide()
+       $('.cards').slideDown()
+   }
+
    function joinroom(id){
         console.log("sending joinroom");
         socket.emit('joinroom',{'room':id});
    }
 
-   function delayedfun(){
-        socket.emit('delayed');
-   }
 
    function response(value){
         socket.emit('response',value);
