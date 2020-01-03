@@ -6,9 +6,14 @@ Functionaliy:
 Room:
   ✔ Full random room ID @done(19-11-04 12:58)--almost full random
 
+
 Client side:
   ✔ Show cards to choose @done(19-12-12 07:35)
   ✔ Send the choosen card @done(19-12-19 09:13)
+  ✔ Make card text not selectable @done(19-12-29 23:27)
+  ☐ Have an endgame summery of win/lose
+  ☐ Show oppents status
+  ☐ Show what they put last turn - their summarized attack/defense
 
 Server side:
   ✔ Store the shown cards in the json object - to avoid cheating @done(19-12-19 09:13)
@@ -16,3 +21,7 @@ Server side:
   ✔ Have a starting/non-starting hand for each player @done(19-12-12 07:35)
   ✔ Send out starting hand @done(19-12-12 07:35)
   ✔ Handle multiple input send response from the user @done(19-12-19 09:13)
+  ✔ Make more cards @done(19-12-29 11:42)
+  ✔ rooms show the number of players @done(19-12-29 23:07)
+  ☐ Remove room if no players are inside
+  ☐ Remove playerID from room if player leaves the room

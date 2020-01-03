@@ -1,18 +1,18 @@
 let Cards={
     0:{
-        'name':'Húsos nagydarab',
+        'name':'General',
         'life':5,
         'attack':3,
-        'cost':5
+        'cost':4
     },
     1:{
-        'name':'Gyilkos kenyér',
-        'life':2,
+        'name':'Assasin',
+        'life':0,
         'attack':6,
-        'cost':0
+        'cost':2
     },
     2:{
-        'name':'Tüskés hordó',
+        'name':'Barricade',
         'life':4,
         'attack':1,
         'cost':2
@@ -27,6 +27,42 @@ let Cards={
         'name':'harci szekerce',
         'life':0,
         'attack':5,
+        'cost':3
+    },
+    5:{
+        'name':'Gyalogság',
+        'life':2,
+        'attack':1,
+        'cost':1
+    },
+    6:{
+        'name':'Tüzérség',
+        'life':1,
+        'attack':3,
+        'cost':2
+    },
+    7:{
+        'name':'Titkos terv',
+        'life':0,
+        'attack':2,
+        'cost':1
+    },
+    8:{
+        'name':'Árulás',
+        'life':-1,
+        'attack':3,
+        'cost':1
+    },
+    9:{
+        'name':'Rakéta állomás',
+        'life':1,
+        'attack':7,
+        'cost':4
+    },
+    10:{
+        'name':'Tank',
+        'life':3,
+        'attack':3,
         'cost':3
     }
 }

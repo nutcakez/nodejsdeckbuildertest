@@ -9,11 +9,15 @@ app.get("/",function(req,res){
 app.get("/style.css",function(req,res){
     res.sendFile(__dirname+'/style.css');
 })
-
+app.get("/teststyle.css",function(req,res){
+    res.sendFile(__dirname+'/teststyle.css');
+})
 app.get("/clientcards.js",function(req,res){
     res.sendFile(__dirname+'/clientcards.js');
 })
-
+app.get("/pic1.jpg",function(req,res){
+    res.sendFile(__dirname+'/pic1.jpg');
+})
 server.listen(2000);
 console.log("started the server");
 
@@ -41,12 +45,19 @@ io.sockets.on('connection',function(socket){
     // });
     SendAvailableRooms(socket);
 
+    setInterval(function(){
+        socket.emit('message',{
+            socketid:socket.id,
+            time:new Date()
+        })
+    },1000)
+
     //create room
     socket.on('CreateNewRoom',function(){
         if(notinanyroom(socket.id)){
-            CreateNewRoom(socket.id);
+            CreateNewRoom(socket.id,socket);
             SendAvailableRooms(io);
-            io.emit('rooms', rooms);
+            //io.emit('rooms', rooms);
         }else{
             console.log("already in a room, cant create another")
         }
@@ -79,6 +90,7 @@ io.sockets.on('connection',function(socket){
         if(rooms[data.room].users.length>1){
                 console.log(rooms[data.room].users)
                 rooms[data.room].visible=false;
+                SendAvailableRooms(io);
                 GameStart(data.room);
         }
         else
@@ -105,11 +117,11 @@ io.sockets.on('connection',function(socket){
 
 
 function SendAvailableRooms(socket){
-    let roomsend=[];
+    let roomsend={};
     for(key in rooms){
         if(rooms[key].visible==true)
         {
-            roomsend.push(key)
+            roomsend[key]=rooms[key].users.length
         }
     }
     socket.emit('availablerooms',{
@@ -122,7 +134,7 @@ function SendAvailableRooms(socket){
 
 
 
-function CreateNewRoom(username){
+function CreateNewRoom(username,user){
     let newroomID=MakeRoomID()
     rooms[newroomID]={
         "users":[username],
@@ -133,7 +145,7 @@ function CreateNewRoom(username){
     }
     users[username].currentroom=newroomID
     AddToRoom(newroomID,username)
-    
+    user.emit('connectedroom',newroomID)
 }
 
 //first room (0) is the game room
@@ -144,10 +156,7 @@ async function GameStart(actualRoomID){
     SendGameStart(actualRoomID)
     //init starting deck
     initStartingDeck(actualRoomID)
-    //get hand for player
-    getNewHand(actualRoomID)
-    //send out hand
-    SendOutHand(actualRoomID)
+    
     let gamestarted=true;
     let wincondition=false;
     let reactionchecker=[];
@@ -155,6 +164,12 @@ async function GameStart(actualRoomID){
     let timer;
     let interval;
     do{
+        //get hand for player
+        getNewHand(actualRoomID)
+
+        //send out hand
+        SendOutHand(actualRoomID)
+
         await waitingforresponseortime(actualRoomID);
         timeover=false;
         console.log("megy")
@@ -164,37 +179,27 @@ async function GameStart(actualRoomID){
         //calculate outcome/update status/return info to player
         CalculateFight(actualRoomID)
 
+        //clear the response from field in room/user
+        ClearResponse(actualRoomID)
+
         //update hand and graveyard
         UpdateHandGraveyard(actualRoomID)
         
         //communicate the outcome
         StatusUpdate(actualRoomID)
         
+        //remove dead players
+        RemovePlayers(actualRoomID)
+
+
         //communicate the buy choices
         CardBuy(actualRoomID)
 
         //wait for buy choices responses
-            
+        await waitingforresponseortime(actualRoomID)            
 
-
-        //DUMMY WINNER STUFF
-        // for(let i=0;i<rooms[actualRoomID].users.length;i++){
-        //     if(rooms[actualRoomID].users[i].responsefrom==''){
-        //         rooms[actualRoomID].users[i].responsefrom=0
-        //     }
-        // }
-        // if(rooms[actualRoomID][rooms[actualRoomID].users[0]].responsefrom>rooms[actualRoomID][rooms[actualRoomID].users[1]].responsefrom){
-        //     console.log("The winner is : "+rooms[actualRoomID]['users'][0])
-        // }else{
-        //     if(rooms[actualRoomID][rooms[actualRoomID].users[0]].responsefrom==rooms[actualRoomID][rooms[actualRoomID].users[1]].responsefrom){
-        //         console.log("-------------- DRAW")
-        //     }else{
-        //         console.log("The winner is : "+rooms[actualRoomID]['users'][1])
-        //     }
-        // }
         
 
-        rooms[actualRoomID].responsefrom=[];
         console.log("end of cycle")
     }while(wincondition==true)
 }
@@ -286,12 +291,10 @@ function CalculateFight(roomID){
     rooms[roomID][p1id].responsefrom.forEach(element => {
         p1deck.push(rooms[roomID][p1id].Hand[element])
     });
-    console.log('p1deck: '+p1deck)
 
     rooms[roomID][p2id].responsefrom.forEach(element => {
         p2deck.push(rooms[roomID][p2id].Hand[element])
     });
-    console.log('p2deck: '+p2deck)
     
 
     let result=cardmanager.fightcalculating(p1deck,p2deck)
@@ -299,7 +302,6 @@ function CalculateFight(roomID){
     rooms[roomID][p1id].Life=rooms[roomID][p1id].Life-result.p1.lifeloss;
     rooms[roomID][p2id].Life=rooms[roomID][p2id].Life-result.p2.lifeloss;
     
-    console.log(rooms[roomID])
 }
 
 function StatusUpdate(roomID){
@@ -322,24 +324,20 @@ function ValidateResponse(roomID){
     let p1id=rooms[roomID].users[0]
     let p2id=rooms[roomID].users[1]
     let sum=0
-    let p1cardrequest=0
 
     rooms[roomID][p1id].responsefrom.forEach(element => {
         sum=sum+cardmanager.Cards[rooms[roomID][p1id].Hand[element]].cost
-        console.log(cardmanager.Cards[rooms[roomID][p1id].Hand[element]]+"   "+cardmanager.Cards[rooms[roomID][p1id].Hand[element]].cost)
     });
     if(sum>rooms[roomID][p1id].Gold){
         rooms[roomID][p1id].response=[]
     }
     else
     {
-        console.log("p1 current gold: "+rooms[roomID][p1id].Gold)
         rooms[roomID][p1id].Gold=rooms[roomID][p1id].Gold-sum
     }
     sum=0;
 
-    console.log("_--------------------")
-    console.log(rooms[roomID][p2id].responsefrom.length)
+
     rooms[roomID][p2id].responsefrom.forEach(element => {
         console.log(cardmanager.Cards[rooms[roomID][p2id].Hand[element]]+"   "+cardmanager.Cards[rooms[roomID][p2id].Hand[element]].cost)
         sum=sum+cardmanager.Cards[rooms[roomID][p2id].Hand[element]].cost
@@ -369,5 +367,28 @@ function CardBuy(roomID){
         rooms[roomID][playerid].Offered=cardmanager.buyroundcards()
         console.log(rooms[roomID][playerid].Offered)
         io.to(playerid).emit('buyround',rooms[roomID][playerid].Offered)
+    });
+}
+
+function ClearResponse(roomID){
+    rooms[roomID].responsefrom=[]
+    rooms[roomID].users.forEach(playerID => {
+        rooms[roomID][playerID].responsefrom=[]
+    });
+    console.log("----------------")
+    console.log(rooms[roomID])
+}
+
+function RemovePlayers(roomID){
+    let lostplayers=[]
+    rooms[roomID].users.forEach(playerID => {
+        if(rooms[roomID][playerID].Life<=0){
+            lostplayers.push(playerID)
+        }
+    });
+
+    lostplayers.forEach(playerID => {
+        let indexOfPlayer=rooms[roomID].users.indexOf(playerID)
+        rooms[roomID].users=rooms[roomID].users.splice(indexOfPlayer,1)
     });
 }

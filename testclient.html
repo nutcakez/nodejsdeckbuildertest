@@ -1,0 +1,41 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div id="cardholder">
+    <h2 id="roundstatus">Buy round</h2>
+    <div class="card" id="card1" onclick="moka()">
+        <div class="cardpic" >
+            <img id="kep" src="pic1.jpg"></img>
+        </div>
+        <span>barakk</span><br>
+        <span>Támadás: 2</span><br>
+        <span>Élet: 3</span><br>
+        <span>Ár: 5</span>
+    </div>
+    <div class="card">
+        <div class="cardpic"></div>
+    </div>
+    <div class="card">
+        <div class="cardpic"></div>
+    </div>
+    <button id="responsesend" onclick="mokael()">Done</button>
+</div>
+<div id="history">
+
+</div>
+<div id="status">
+
+</div>
+<link rel="stylesheet"  href="teststyle.css">
+<script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+<script>
+    function moka(){
+        let screenwidth=window.screen.width;
+        
+        $('.card').css('transform', 'translateX(' + screenwidth*-2 + 'px)')
+    }
+    function mokael(){
+        $('.card').css('transform', 'translateX(' + 0 + 'px)')
+    }
+</script>

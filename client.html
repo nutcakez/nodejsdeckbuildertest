@@ -1,11 +1,9 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <div id="lobby">
 <button onclick='Createroom()'>Create room</button>
-<button onclick="joinroom()">Join room</button>
-<button onclick="test()">TEST</button>
-<button onclick="changez()"> set promise </button>
-<button onclick="selfmessage()">self message</button>
 <br>
 <div id="playground">
+    <span id="currentroom"></span>
     <div id="rooms">   
     </div>
 </div>
@@ -22,10 +20,12 @@
     <div id="buy2" class="buycard"></div>
     <button id="responsebutton" onclick="sendresponse()">Send response</button>
 </div>
+<div class="statusboard">
+    <h2 id="timer"></h2>
+    <h2 id="gold">Gold: </h2>
+    <h2 id="life">Life: </h2>
+</div>
 
-<h2 id="timer"></h2>
-<h2 id="gold">Gold: </h2>
-<h2 id="life">Life: </h2>
 
 <label id="myid"></label>
 
@@ -43,6 +43,7 @@
     })
     var socket=io();
     let id;
+    let currentroomID;
     let timercontroll;
     let selected=[];
     let sentData=[];
@@ -51,6 +52,7 @@
     let enemy1life=20;
     let enemy1gold=10;
     socket.on('availablerooms',function(data){
+        console.log(data)
         DisplayRooms(data);
     })
 
@@ -58,10 +60,16 @@
         alert(data)
     })
 
+    socket.on('connectedroom',function(data){
+        currentroomID=data;
+        $('#currentroom').text("Current room is: "+currentroomID)
+    })
     socket.on('hand',function(data){
         selected=[]
         sentData=data
         $('#lobby').hide();
+        $('.statusboard').show();
+        $('.gameboard').show();
         for(let i=0;i<data.length;i++){
             $('#card'+i).append("<p>"+Cards[data[i]].name+"</p><p>Cost: "+Cards[data[i]].cost+"</p><p>Attack: "+Cards[data[i]].attack+"</p><p>Life : "+Cards[data[i]].life+"</p>")
         }
@@ -109,13 +117,18 @@
 
 
    function DisplayRooms(roomarray){
-       console.log(roomarray)
-        $('#rooms').remove();
-        $('#playground').append("<div id='rooms'></div)")
+     $('#rooms').remove();
+     $('#playground').append("<div id='rooms'></div)")
+
+     for(key in roomarray.rooms){
+        $('#rooms').append("<span onclick=joinroom('"+key+"')>"+key+" "+roomarray.rooms[key]+"/4</span><br>")
+     }
+
+        
         console.log("starting for")
         for (let i=0;i<roomarray.rooms.length;i++) {
             console.log('roomid --- '+roomarray.rooms[i])
-            $('#rooms').append("<span onclick=joinroom('"+roomarray.rooms[i]+"')>"+roomarray.rooms[i]+"</span><br>")
+            
         };    
         
    }
@@ -128,6 +141,8 @@
    function joinroom(id){
         console.log("sending joinroom");
         socket.emit('joinroom',{'room':id});
+        currentroomID=id
+        $('#currentroom').text("Current room is: "+currentroomID)
    }
 
 
