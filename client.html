@@ -11,13 +11,23 @@
 
 <div class="gameboard">
     <div id="card0" class="cards" onclick="cardclick(0)">
+
     </div>
     <div id="card1" class="cards" onclick="cardclick(1)">
+
     </div>
-    <div id="card2" class="cards" onclick="cardclick(2)"></div>
-    <div id="buy0" class="buycard"></div>
-    <div id="buy1" class="buycard"></div>
-    <div id="buy2" class="buycard"></div>
+    <div id="card2" class="cards" onclick="cardclick(2)">
+
+    </div>
+    <div id="buy0" class="buycard" onclick="cardbuyclick(0)">
+
+    </div>
+    <div id="buy1" class="buycard" onclick="cardbuyclick(1)">
+
+    </div>
+    <div id="buy2" class="buycard" onclick="cardbuyclick(2)">
+
+    </div>
     <button id="responsebutton" onclick="sendresponse()">Send response</button>
 </div>
 <div class="statusboard">
@@ -68,8 +78,12 @@
         selected=[]
         sentData=data
         $('#lobby').hide();
+        $('.buycard').slideUp(1000,function(){
+            $('.cards').slideDown(1000)
+        })
         $('.statusboard').show();
         $('.gameboard').show();
+        $('.cards').empty();
         for(let i=0;i<data.length;i++){
             $('#card'+i).append("<p>"+Cards[data[i]].name+"</p><p>Cost: "+Cards[data[i]].cost+"</p><p>Attack: "+Cards[data[i]].attack+"</p><p>Life : "+Cards[data[i]].life+"</p>")
         }
@@ -79,12 +93,16 @@
 
 
     socket.on('buyround',function(data){
+        sentData=data;
+        $('.buycard').empty()
         for(let i=0;i<data.length;i++){
             $('#buy'+i).append("<p>"+Cards[data[i]].name+"</p><p>Cost: "+Cards[data[i]].cost+"</p><p>Attack: "+Cards[data[i]].attack+"</p><p>Life : "+Cards[data[i]].life+"</p>")
         }
         $('.cards').slideUp(1000,function(){
             $('.buycard').slideDown(1000)
         })
+        $('#timer').text(6)
+        timercontroll=setInterval(TimerCountdown, 1000);
     })
 
     //restart the state
@@ -178,17 +196,46 @@
        
    }
 
+   function cardbuyclick(clickedcard){
+       //alert($('#buy'+clickedcard).css("background-color"))
+        if($('#buy'+clickedcard).css("background-color")=="rgb(30, 144, 255)"){
+           selected.push(clickedcard)
+           console.log(selected)
+           $('#buy'+clickedcard).css("background-color","green")
+           if(gold>=Cards[sentData[clickedcard]].cost){
+               gold=gold-Cards[sentData[clickedcard]].cost
+               $('#gold').html("Gold: "+gold)
+           }
+           else
+           {
+              $('#buy'+clickedcard).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100)
+           }
+       }else{
+           $('#buy'+clickedcard).css("background-color","rgb(30, 144, 255)")
+          
+           for(let i=0;i<selected.length;i++){
+               if(selected[i]==clickedcard){
+                   selected.splice(i,1)
+                   console.log(selected)
+                   break;
+               }
+           }
+            gold=gold+Cards[sentData[clickedcard]].cost
+            $('#gold').html("Gold: "+gold)
+       }
+   }
+
    function TimerCountdown(){
        let currentNumber=$('#timer').text()
        $('#timer').text(currentNumber-1)
        if(currentNumber-1==0){
-            clearInterval(timercontroll)
-            socket.emit('response',selected)
+            sendresponse()
        }    
    }
 
    function sendresponse(){
        clearInterval(timercontroll)
        socket.emit('response',selected)
+       selected=[];
    }
 </script>

@@ -10,7 +10,7 @@ app.get("/style.css",function(req,res){
     res.sendFile(__dirname+'/style.css');
 })
 app.get("/teststyle.css",function(req,res){
-    res.sendFile(__dirname+'/teststyle.css');
+    res.sendFile(__dirname+'/style.css');
 })
 app.get("/clientcards.js",function(req,res){
     res.sendFile(__dirname+'/clientcards.js');
@@ -24,8 +24,6 @@ console.log("started the server");
 var p1deck=[1,1,3];
 var p2deck=[2,2,2];
 
-console.log(cardmanager.fightcalculating(p1deck,p2deck));
-console.log(cardmanager.buyroundcards())
 
 var rooms={};
 var users={};
@@ -39,10 +37,6 @@ io.sockets.on('connection',function(socket){
     console.log("socket connection "+socket.id);
     socket.emit('connected',socket.id);
     users[socket.id]={'currentroom':''};
-    // users.push({
-    //     'username':socket.id,
-    //     'currentroom':''
-    // });
     SendAvailableRooms(socket);
 
     setInterval(function(){
@@ -57,7 +51,6 @@ io.sockets.on('connection',function(socket){
         if(notinanyroom(socket.id)){
             CreateNewRoom(socket.id,socket);
             SendAvailableRooms(io);
-            //io.emit('rooms', rooms);
         }else{
             console.log("already in a room, cant create another")
         }
@@ -85,8 +78,6 @@ io.sockets.on('connection',function(socket){
         {
             console.log("no such room")
         }
-        //console.log(socket.id+"  user joined this room: "+data.room);
-        //console.log("current players inside: "+rooms[IndexOfRoom(data.room,rooms)].users)
         if(rooms[data.room].users.length>1){
                 console.log(rooms[data.room].users)
                 rooms[data.room].visible=false;
@@ -101,10 +92,7 @@ io.sockets.on('connection',function(socket){
 
     
 
-    //buy the card
-    socket.on('buycard',function(data){
 
-    })
     socket.on('response',function(data){
         let roomid=users[socket.id].currentroom
         rooms[roomid].responsefrom.push(socket.id)
@@ -158,7 +146,7 @@ async function GameStart(actualRoomID){
     initStartingDeck(actualRoomID)
     
     let gamestarted=true;
-    let wincondition=false;
+    let wincondition=true;
     let reactionchecker=[];
     let timeover=false;
     let timer;
@@ -172,7 +160,6 @@ async function GameStart(actualRoomID){
 
         await waitingforresponseortime(actualRoomID);
         timeover=false;
-        console.log("megy")
         //check if there's enough gold to hire units
         ValidateResponse(actualRoomID)
 
@@ -191,12 +178,32 @@ async function GameStart(actualRoomID){
         //remove dead players
         RemovePlayers(actualRoomID)
 
+        
+        if(rooms[actualRoomID].users.length>1)
+        {
+            //communicate the buy choices
+            CardBuy(actualRoomID)
 
-        //communicate the buy choices
-        CardBuy(actualRoomID)
+            //wait for buy choices responses
+            await waitingforresponseortime(actualRoomID)            
 
-        //wait for buy choices responses
-        await waitingforresponseortime(actualRoomID)            
+            //validate and add to deck that card
+            ValidateCardBuy(actualRoomID)
+
+            //Add gold for users
+            GoldRound(actualRoomID)
+
+            //communicate bought cards
+            BoughtCards(actualRoomID)
+        }
+        else
+        {
+            wincondition=false;
+
+            //communicate to the winner
+            WinnerCommunicate(actualRoomID)
+        }
+        
 
         
 
@@ -216,6 +223,7 @@ function waitingforresponseortime(gameroomid){
             if(timer=="done" || rooms[gameroomid].responsefrom.length==2){
                 clearInterval(myi)
                 clearTimeout(timer);
+                rooms[gameroomid].responsefrom=[]
                 resolve("done")
             }
         },500)
@@ -391,4 +399,19 @@ function RemovePlayers(roomID){
         let indexOfPlayer=rooms[roomID].users.indexOf(playerID)
         rooms[roomID].users=rooms[roomID].users.splice(indexOfPlayer,1)
     });
+}
+
+function ValidateCardBuy(roomID){
+
+}
+
+function GoldRound(roomID){
+    rooms[roomID].users.forEach(userid => {
+        rooms[roomID][userid].Gold=rooms[roomID][userid].Gold+3
+    })
+
+}
+
+function BoughtCards(roomID){
+    
 }
