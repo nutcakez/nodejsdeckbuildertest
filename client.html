@@ -51,7 +51,7 @@
     $(function(){
         
     })
-    var socket=io();
+    var socket=io('https://dof-test.herokuapp.com');
     let id;
     let currentroomID;
     let timercontroll;
@@ -63,7 +63,7 @@
     let enemy1gold=10;
     socket.on('availablerooms',function(data){
         console.log(data)
-        DisplayRooms(data);
+        DisplayRooms(data.rooms);
     })
 
     socket.on('ownID',function(data){
@@ -138,17 +138,15 @@
      $('#rooms').remove();
      $('#playground').append("<div id='rooms'></div)")
 
+
     for (let i = 0; i < roomarray.length; i++) {
         $('#rooms').append("<span onclick=joinroom('"+roomarray[i].roomid+"')>"+roomarray[i].roomid+" "+roomarray[i].users+"/4</span><br>")
      
-    }  
+    }    
+
 
         
-        console.log("starting for")
-        for (let i=0;i<roomarray.rooms.length;i++) {
-            console.log('roomid --- '+roomarray.rooms[i])
-            
-        };    
+  
         
    }
 
