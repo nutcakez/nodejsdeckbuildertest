@@ -138,8 +138,8 @@
      $('#rooms').remove();
      $('#playground').append("<div id='rooms'></div)")
 
-     for(key in roomarray.rooms){
-        $('#rooms').append("<span onclick=joinroom('"+key+"')>"+key+" "+roomarray.rooms[key]+"/4</span><br>")
+     for(x in roomarray.rooms){
+        $('#rooms').append("<span onclick=joinroom('"+x.roomid+"')>"+x.roomid+" "+x.users+"/4</span><br>")
      }
 
         
