@@ -100,6 +100,10 @@ io.sockets.on('connection',function(socket){
         rooms[roomid].responsefrom.push(socket.id)
         rooms[roomid][socket.id]['responsefrom']=data
     })
+
+    socket.on('setname',function(data){
+        users[socket.id].nickname=data;
+    })
 })
 
 
@@ -441,6 +445,6 @@ function GoldRound(roomID){
 
 function BoughtCards(roomID){
     rooms[roomID].users.forEach(userid=>{
-        io.to(playerid).emit('boughtcards',rooms[roomID].BoughtCards)
+        io.to(userid).emit('boughtcards',rooms[roomID].BoughtCards)
     })
 }
