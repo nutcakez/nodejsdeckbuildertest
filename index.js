@@ -18,7 +18,7 @@ app.get("/clientcards.js",function(req,res){
 app.get("/pic1.jpg",function(req,res){
     res.sendFile(__dirname+'/pic1.jpg');
 })
-server.listen(process.env.PORT);
+server.listen(2000);
 console.log("started the server");
 
 var p1deck=[1,1,3];
@@ -78,6 +78,7 @@ io.sockets.on('connection',function(socket){
         {
             console.log("no such room")
         }
+        console.log(data.room)
         if(rooms[data.room].users.length>1){
                 console.log(rooms[data.room].users)
                 rooms[data.room].visible=false;
@@ -96,9 +97,11 @@ io.sockets.on('connection',function(socket){
     })
 
     socket.on('response',function(data){
+        console.log('got this response')
+        console.log(data)
         let roomid=users[socket.id].currentroom
         rooms[roomid].responsefrom.push(socket.id)
-        rooms[roomid][socket.id]['responsefrom']=data
+        rooms[roomid][socket.id]['response']=data
     })
 
     socket.on('setname',function(data){
@@ -216,23 +219,15 @@ async function GameStart(actualRoomID){
             WinnerCommunicate(actualRoomID)
         }
         
-
-        
-
-        console.log("end of cycle")
     }while(wincondition==true)
 }
 
 function waitingforresponseortime(gameroomid){
     let timer=setTimeout(function(){
-            console.log("timer out!")
             timer="done";
         },6700);
     return new Promise(resolve=>{
-        console.log("in the promisee")
-        let myi=setInterval(function(){
-            console.log("response from: "+rooms[gameroomid].responsefrom.length)
-            if(timer=="done" || rooms[gameroomid].responsefrom.length==2){
+        let myi=setInterval(function(){if(timer=="done" || rooms[gameroomid].responsefrom.length==2){
                 clearInterval(myi)
                 clearTimeout(timer);
                 rooms[gameroomid].responsefrom=[]
