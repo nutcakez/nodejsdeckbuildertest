@@ -201,7 +201,7 @@ async function GameStart(actualRoomID){
 
             //wait for buy choices responses
             await waitingforresponseortime(actualRoomID)            
-
+            timeover=false;
             //validate and add to deck that card
             ValidateCardBuy(actualRoomID)
 
