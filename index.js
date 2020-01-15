@@ -2,10 +2,7 @@ var express=require("express");
 var app=express();
 var server=require("http").Server(app);
 var cardmanager=require('./cards.js');
-app.get("/",function(req,res){
-    res.sendFile(__dirname+'/client.html');
-})
-
+app.use(express.static('dist'));
 app.get("/style.css",function(req,res){
     res.sendFile(__dirname+'/style.css');
 })
@@ -225,7 +222,7 @@ async function GameStart(actualRoomID){
 function waitingforresponseortime(gameroomid){
     let timer=setTimeout(function(){
             timer="done";
-        },6700);
+        },12700);
     return new Promise(resolve=>{
         let myi=setInterval(function(){if(timer=="done" || rooms[gameroomid].responsefrom.length==2){
                 clearInterval(myi)
@@ -233,7 +230,7 @@ function waitingforresponseortime(gameroomid){
                 rooms[gameroomid].responsefrom=[]
                 resolve("done")
             }
-        },500)
+        },100)
     })
 }
 
