@@ -138,9 +138,13 @@ exports.choiceCards=(remainingdeck,useddeck)=>{
 
 //returns deck - graveyard - hand 
 exports.getHand=(hand,deck,graveyard)=>{
-    for(let i=0;i<hand.length;i++){
-        graveyard.push(hand.pop())
-    }
+    hand.forEach(element => {
+        graveyard.push(element)
+    });
+    hand=[]
+    // for(let i=0;i<hand.length;i++){
+    //     graveyard.push(hand.pop())
+    // }
     while(hand.length!=3){
         if(deck.length>0){
             hand.push(deck.pop())

@@ -15,7 +15,7 @@ app.get("/clientcards.js",function(req,res){
 app.get("/pic1.jpg",function(req,res){
     res.sendFile(__dirname+'/pic1.jpg');
 })
-server.listen(process.env.PORT);
+server.listen(2000);
 console.log("started the server");
 
 var p1deck=[1,1,3];

@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine",
-    "start":"node index.js"
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +15,7 @@
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
-    "jasmine": "^3.5.0"
+    "jasmine": "^3.5.0",
+    "mocha": "^7.0.0"
   }
 }
