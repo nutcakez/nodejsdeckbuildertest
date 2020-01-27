@@ -1,4 +1,5 @@
 var assert = require('assert');
+var index = require('../index')
 var cardmanager=require('../cards.js')
 describe('Deck related', function() {
   let result=cardmanager.initializeDeck()
@@ -41,4 +42,9 @@ describe('Deck related', function() {
     })
   });
 });
-
+describe('Fight related', function() {
+    it('Testing vs empty board', function() {
+        let results=cardmanager.fightcalculating([0,1],[])
+        assert.equal(results.p2.lifeloss,9,'lifeloss for P2 should be 9')
+    })
+})

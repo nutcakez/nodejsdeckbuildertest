@@ -2,6 +2,8 @@ Functionaliy:
   ✔ make 3 card @done(19-10-09 13:43)
   ✔ fight algorithm without keyword @done(19-10-09 13:43)
   ✔ client get a deck - card datas on server or on client? @done(19-11-04 12:58)
+  ☐ Be able to surrender
+  ☐ Finish game if surrendered
 
 Room:
   ✔ Full random room ID @done(19-11-04 12:58)--almost full random
@@ -12,8 +14,9 @@ Client side:
   ✔ Send the choosen card @done(19-12-19 09:13)
   ✔ Make card text not selectable @done(19-12-29 23:27)
   ☐ Have an endgame summery of win/lose
-  ☐ Show oppents status
+  ✔ Show oppents status @done(20-01-26 18:29)
   ☐ Show what they put last turn - their summarized attack/defense
+  ☐ At buyround only 1 card should be selectable
 
 Server side:
   ✔ Store the shown cards in the json object - to avoid cheating @done(19-12-19 09:13)

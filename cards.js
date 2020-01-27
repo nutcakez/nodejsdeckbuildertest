@@ -176,7 +176,7 @@ function deckshuffle(deck){
 }
 
 exports.UpdateHDG=function(hand,deck,graveyard){
-    for(let i=0;i<hand.length+1;i++){
+    while(hand.length!=0){
         graveyard.push(hand.pop())
     }
 
