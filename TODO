@@ -2,7 +2,7 @@ Functionaliy:
   ✔ make 3 card @done(19-10-09 13:43)
   ✔ fight algorithm without keyword @done(19-10-09 13:43)
   ✔ client get a deck - card datas on server or on client? @done(19-11-04 12:58)
-  ☐ Be able to surrender
+  ☐ Be able to surrender  - Started
   ☐ Finish game if surrendered
 
 Room:
@@ -26,5 +26,7 @@ Server side:
   ✔ Handle multiple input send response from the user @done(19-12-19 09:13)
   ✔ Make more cards @done(19-12-29 11:42)
   ✔ rooms show the number of players @done(19-12-29 23:07)
+  ☐ waitingforresponsetime should check wincondition
+  ☐ move wincondition to the room data
   ☐ Remove room if no players are inside
   ☐ Remove playerID from room if player leaves the room

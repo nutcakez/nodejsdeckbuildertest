@@ -96,6 +96,12 @@ io.sockets.on('connection',function(socket){
     socket.on('setname',function(data){
         users[socket.id].nickname=data;
     })
+
+    socket.on('surrender',function(){
+        console.log('got surrender')
+        rooms[users[socket.id].currentroom][socket.id].Life=0
+        RemovePlayers(users[socket.id].currentroom)
+    })
 })
 
 
@@ -158,6 +164,11 @@ async function GameStart(actualRoomID){
 
         //send out hand
         SendOutHand(actualRoomID)
+
+        if(wincondition=false){
+            WinnerCommunicate(actualRoomID)
+            break;
+        }
 
         await waitingforresponseortime(actualRoomID);
         timeover=false;
@@ -333,17 +344,21 @@ function ValidateResponse(roomID){
     }
     sum=0;
 
-
-    rooms[roomID][p2id].response.forEach(element => {
-        sum=sum+cardmanager.Cards[rooms[roomID][p2id].Hand[element]].cost
-    });
-    if(sum>rooms[roomID][p2id].Gold){
-        rooms[roomID][p2id].response=[]
+    try{
+        rooms[roomID][p2id].response.forEach(element => {
+            sum=sum+cardmanager.Cards[rooms[roomID][p2id].Hand[element]].cost
+        });
+        if(sum>rooms[roomID][p2id].Gold){
+            rooms[roomID][p2id].response=[]
+        }
+        else
+        {
+            rooms[roomID][p2id].Gold=rooms[roomID][p2id].Gold-sum
+        }
+    }catch(error){
+        console.log('a player might have surrendered')
     }
-    else
-    {
-        rooms[roomID][p2id].Gold=rooms[roomID][p2id].Gold-sum
-    }
+    
 }
 
 function UpdateHandDeckGraveyard(roomID){
@@ -420,4 +435,13 @@ function BoughtCards(roomID){
     rooms[roomID].users.forEach(userid=>{
         io.to(userid).emit('boughtcards',rooms[roomID].BoughtCards)
     })
+}
+
+function WinnerCommunicate(roomID){
+    rooms[roomID].users.forEach(userid=>{
+        if(rooms[roomID][userid].life>0){
+            io.to(userid).emit('victory')
+        }
+    })
+    wincondition=false;
 }
