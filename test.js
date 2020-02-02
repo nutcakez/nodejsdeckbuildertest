@@ -19,5 +19,10 @@
 // console.log('megnézni hogy van e randomstuff key: '+cucc.hasOwnProperty(beilleszt));
 // console.log('megnézni hogy van e egy teljesen más key: '+cucc.hasOwnProperty('lamalama'));
 
-let arrayka=[]
-console.log(arrayka.length)
+let arrayka=["Dani","Ákos","majom","Norbi","David"]
+//majom törlés
+let majomindex=arrayka.indexOf("majom")
+console.log(majomindex)
+
+ arrayka=arrayka.splice(majomindex,1)
+console.log(arrayka)

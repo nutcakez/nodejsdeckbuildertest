@@ -2,8 +2,7 @@ Functionaliy:
   ✔ make 3 card @done(19-10-09 13:43)
   ✔ fight algorithm without keyword @done(19-10-09 13:43)
   ✔ client get a deck - card datas on server or on client? @done(19-11-04 12:58)
-  ☐ Be able to surrender  - Started
-  ☐ Finish game if surrendered
+ 
 
 Room:
   ✔ Full random room ID @done(19-11-04 12:58)--almost full random
@@ -16,7 +15,9 @@ Client side:
   ☐ Have an endgame summery of win/lose
   ✔ Show oppents status @done(20-01-26 18:29)
   ☐ Show what they put last turn - their summarized attack/defense
-  ☐ At buyround only 1 card should be selectable
+  ✔ At buyround only 1 card should be selectable @done(20-01-29 09:08)
+  ✔ Rework selection @started(20-01-29 08:46) @done(20-01-29 09:08) @lasted(22m51s)
+
 
 Server side:
   ✔ Store the shown cards in the json object - to avoid cheating @done(19-12-19 09:13)
@@ -26,7 +27,8 @@ Server side:
   ✔ Handle multiple input send response from the user @done(19-12-19 09:13)
   ✔ Make more cards @done(19-12-29 11:42)
   ✔ rooms show the number of players @done(19-12-29 23:07)
-  ☐ waitingforresponsetime should check wincondition
-  ☐ move wincondition to the room data
   ☐ Remove room if no players are inside
   ☐ Remove playerID from room if player leaves the room
+  ☐ Fix message sending to winner @started(20-01-29 14:30)
+Later:
+  ☐ surrender

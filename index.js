@@ -165,11 +165,6 @@ async function GameStart(actualRoomID){
         //send out hand
         SendOutHand(actualRoomID)
 
-        if(wincondition=false){
-            WinnerCommunicate(actualRoomID)
-            break;
-        }
-
         await waitingforresponseortime(actualRoomID);
         timeover=false;
         //check if there's enough gold to hire units
@@ -204,6 +199,8 @@ async function GameStart(actualRoomID){
 
             //Add gold for users
             GoldRound(actualRoomID)
+
+            StatusUpdate(actualRoomID)
 
             //communicate bought cards
             BoughtCards(actualRoomID)
@@ -255,7 +252,7 @@ function AddToRoom(room,userid){
     rooms[room][userid]={
         "response":[],
         "Deck":[],
-        "Gold":10,
+        "Gold":5,
         "Life":20,
         "Hand":[],
         "Graveyard":[],
@@ -397,8 +394,12 @@ function RemovePlayers(roomID){
 
     lostplayers.forEach(playerID => {
         let indexOfPlayer=rooms[roomID].users.indexOf(playerID)
-        rooms[roomID].users=rooms[roomID].users.splice(indexOfPlayer,1)
+        io.to(playerID).emit('lost')
+        rooms[roomID].users.splice(indexOfPlayer,1)
+
+        
     });
+    console.log(rooms[roomID.users])
 }
 
 function ValidateCardBuy(roomID){
@@ -438,10 +439,5 @@ function BoughtCards(roomID){
 }
 
 function WinnerCommunicate(roomID){
-    rooms[roomID].users.forEach(userid=>{
-        if(rooms[roomID][userid].life>0){
-            io.to(userid).emit('victory')
-        }
-    })
-    wincondition=false;
+    io.to(rooms[roomID].users[0]).emit('victory')
 }
