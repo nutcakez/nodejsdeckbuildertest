@@ -15,7 +15,7 @@ app.get("/clientcards.js",function(req,res){
 app.get("/pic1.jpg",function(req,res){
     res.sendFile(__dirname+'/pic1.jpg');
 })
-server.listen(2000);
+server.listen(process.env.PORT);
 console.log("started the server");
 
 var p1deck=[1,1,3];
@@ -291,22 +291,45 @@ function CalculateFight(roomID){
     let p1deck=[];
     let p2deck=[];
    
+    let history={};
     
 
     rooms[roomID][p1id].response.forEach(element => {
         p1deck.push(rooms[roomID][p1id].Hand[element])
     });
 
+   
+
     rooms[roomID][p2id].response.forEach(element => {
         p2deck.push(rooms[roomID][p2id].Hand[element])
     });
     
+    
+
 
     let result=cardmanager.fightcalculating(p1deck,p2deck)
     
     rooms[roomID][p1id].Life=rooms[roomID][p1id].Life-result.p1.lifeloss;
     rooms[roomID][p2id].Life=rooms[roomID][p2id].Life-result.p2.lifeloss;
     
+    history={
+        "p1":{
+            "id":p1id,
+            "deck":p1deck,
+            "attack":result.p1.attack,
+            "defense":result.p1.defense,
+            "damage":result.p1.lifeloss
+        },
+        "p2":{
+            "id":p2id,
+            "deck":p2deck,
+            "attack":result.p2.attack,
+            "defense":result.p2.defense,
+            "damage":result.p2.lifeloss
+        }
+    }
+
+    HistoryCommunicate(roomID,history)
 }
 
 function StatusUpdate(roomID){
@@ -440,4 +463,10 @@ function BoughtCards(roomID){
 
 function WinnerCommunicate(roomID){
     io.to(rooms[roomID].users[0]).emit('victory')
+}
+
+function HistoryCommunicate(roomID,history){
+    rooms[roomID].users.forEach(userid=>{
+        io.to(userid).emit('history',history)
+    })
 }
