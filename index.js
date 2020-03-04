@@ -401,7 +401,7 @@ function CardBuy(roomID){
 function ClearResponse(roomID){
     rooms[roomID].responsefrom=[]
     rooms[roomID].users.forEach(playerID => {
-        rooms[roomID][playerID].responsefrom=[]
+        rooms[roomID][playerID].response=[]
     });
     console.log("----------------")
     console.log(rooms[roomID])
