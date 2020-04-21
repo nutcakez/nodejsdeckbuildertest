@@ -62,7 +62,7 @@ io.sockets.on('connection',function(socket){
             }
             else
             {
-                console.log("this user is either in the room or the game has started already")
+                console.log("this user is either in the room or the game has started already.")
             }
         }
         else
