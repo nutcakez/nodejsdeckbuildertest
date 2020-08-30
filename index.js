@@ -1,6 +1,7 @@
 var express=require("express");
 var app=express();
 var server=require("http").Server(app);
+let appPort=process.env.PORT||2000
 var cardmanager=require('./cards.js');
 app.use(express.static('dist'));
 app.get("/style.css",function(req,res){
@@ -15,18 +16,14 @@ app.get("/clientcards.js",function(req,res){
 app.get("/pic1.jpg",function(req,res){
     res.sendFile(__dirname+'/pic1.jpg');
 })
-server.listen(process.env.PORT);
-console.log("started the server");
+server.listen(appPort);
+console.log("listening on: "+appPort)
 
-var p1deck=[1,1,3];
-var p2deck=[2,2,2];
 
 
 var rooms={};
 var users={};
 
-var lobbyusers=[];
-var game={};
 var io=require('socket.io')(server,{});
 
 //connecting to server
@@ -150,20 +147,16 @@ async function GameStart(actualRoomID){
     SendGameStart(actualRoomID)
     //init starting deck
     initStartingDeck(actualRoomID)
+    getNewHand(actualRoomID)
+    //sending out gamestart 
+    SendGameStart(actualRoomID)
     
-    let gamestarted=true;
+    
     let wincondition=true;
-    let reactionchecker=[];
     let timeover=false;
-    let timer;
-    let interval;
 
     do{
-        //get hand for player
-        getNewHand(actualRoomID)
-
-        //send out hand
-        SendOutHand(actualRoomID)
+        
 
         await waitingforresponseortime(actualRoomID);
         timeover=false;
@@ -212,7 +205,14 @@ async function GameStart(actualRoomID){
             //communicate to the winner
             WinnerCommunicate(actualRoomID)
         }
-        
+        if(wincondition==true)
+        {
+            //get hand for player
+            getNewHand(actualRoomID)
+
+            //send out hand
+            SendOutHand(actualRoomID)
+        }
     }while(wincondition==true)
 }
 
