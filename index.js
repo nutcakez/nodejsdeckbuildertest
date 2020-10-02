@@ -7,15 +7,10 @@ app.use(express.static('dist'));
 app.get("/style.css",function(req,res){
     res.sendFile(__dirname+'/style.css');
 })
-app.get("/teststyle.css",function(req,res){
-    res.sendFile(__dirname+'/style.css');
-})
 app.get("/clientcards.js",function(req,res){
     res.sendFile(__dirname+'/clientcards.js');
 })
-app.get("/pic1.jpg",function(req,res){
-    res.sendFile(__dirname+'/pic1.jpg');
-})
+
 server.listen(appPort);
 console.log("listening on: "+appPort)
 
@@ -36,8 +31,6 @@ var rooms={
         let listenerOne=function(val){}
         listenerOne=listener
         this.responseListeners[roomId]=listenerOne
-        // this.responseListener=listener
-        // this.responseListeners.push(this.responseListener)
     }
 };
 var users={};
@@ -105,12 +98,7 @@ io.sockets.on('connection',function(socket){
     socket.on('response',function(data){
         let roomid=users[socket.id].currentroom
         rooms.addResponse(roomid,socket.id)
-        // rooms[roomid].responsefrom.push(socket.id)
         rooms[roomid][socket.id]['response']=data
-    })
-
-    socket.on('setname',function(data){
-        users[socket.id].nickname=data;
     })
 
     socket.on('surrender',function(){
