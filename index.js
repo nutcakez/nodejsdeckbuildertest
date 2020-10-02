@@ -21,7 +21,25 @@ console.log("listening on: "+appPort)
 
 
 
-var rooms={};
+var rooms={
+    responseListeners:{},
+    addResponse:function(roomId,response){
+        rooms[roomId].responsefrom.push(response)
+        if(rooms[roomId].responsefrom.length==2)
+        {
+			console.log(this.responseListeners[roomId])
+			this.responseListeners[roomId](roomId)
+			delete this.responseListeners[roomId];
+        }
+    },
+    registerListener:function(listener,roomId){
+        let listenerOne=function(val){}
+        listenerOne=listener
+        this.responseListeners[roomId]=listenerOne
+        // this.responseListener=listener
+        // this.responseListeners.push(this.responseListener)
+    }
+};
 var users={};
 
 var io=require('socket.io')(server,{});
@@ -86,7 +104,8 @@ io.sockets.on('connection',function(socket){
 
     socket.on('response',function(data){
         let roomid=users[socket.id].currentroom
-        rooms[roomid].responsefrom.push(socket.id)
+        rooms.addResponse(roomid,socket.id)
+        // rooms[roomid].responsefrom.push(socket.id)
         rooms[roomid][socket.id]['response']=data
     })
 
@@ -217,18 +236,37 @@ async function GameStart(actualRoomID){
 }
 
 function waitingforresponseortime(gameroomid){
-    let timer=setTimeout(function(){
-            timer="done";
-        },12700);
+    let a;
     return new Promise(resolve=>{
-        let myi=setInterval(function(){if(timer=="done" || rooms[gameroomid].responsefrom.length==2){
-                clearInterval(myi)
-                clearTimeout(timer);
-                rooms[gameroomid].responsefrom=[]
-                resolve("done")
-            }
-        },100)
+        a=rooms.registerListener(function(changedRoomId){
+            rooms[gameroomid].responsefrom=[]
+			console.log("Response waiter - Got 2 response")
+			clearTimeout(timer)
+			resolve(13);
+        },gameroomid)
+        let timer=setTimeout(() => {
+            this.a=""
+            resolve(10);
+            console.log("Response waiter - Timer ended for "+gameroomid)
+            rooms[gameroomid].responsefrom=[]
+        }, 12700)
     })
+
+
+
+
+    // let timer=setTimeout(function(){
+    //         timer="done";
+    //     },12700);
+    // return new Promise(resolve=>{
+    //     let myi=setInterval(function(){if(timer=="done" || rooms[gameroomid].responsefrom.length==2){
+    //             clearInterval(myi)
+    //             clearTimeout(timer);
+    //             rooms[gameroomid].responsefrom=[]
+    //             resolve("done")
+    //         }
+    //     },100)
+    // })
 }
 
 function MakeRoomID() {
