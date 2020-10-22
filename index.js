@@ -22,7 +22,6 @@ var rooms={
         rooms[roomId].responsefrom.push(response)
         if(rooms[roomId].responsefrom.length==2)
         {
-			console.log(this.responseListeners[roomId])
 			this.responseListeners[roomId](roomId)
 			delete this.responseListeners[roomId];
         }
@@ -39,7 +38,6 @@ var io=require('socket.io')(server,{});
 
 //connecting to server
 io.sockets.on('connection',function(socket){
-    console.log("socket connection "+socket.id);
     socket.emit('connected',socket.id);
     users[socket.id]={'currentroom':''};
     SendAvailableRooms(socket);
@@ -50,15 +48,12 @@ io.sockets.on('connection',function(socket){
         if(notinanyroom(socket.id)){
             CreateNewRoom(socket.id,socket);
             SendAvailableRooms(io);
-        }else{
-            console.log("already in a room, cant create another")
         }
     })
     
     //join room
     socket.on('joinroom',function(data){
         ///if room exists
-        console.log("user ID: "+socket.id)
         if(rooms.hasOwnProperty(data.room)){
             socket.join(data.room);
             if(rooms[data.room].users[0]!=socket.id && rooms[data.room].users.length!=2)
@@ -66,27 +61,12 @@ io.sockets.on('connection',function(socket){
                 rooms[data.room].users.push(socket.id);
                 users[socket.id].currentroom=data.room
                 AddToRoom(data.room,socket.id)
-                console.log('success of join')
-            }
-            else
-            {
-                console.log("this user is either in the room or the game has started already.")
             }
         }
-        else
-        {
-            console.log("no such room")
-        }
-        console.log(data.room)
         if(rooms[data.room].users.length>1){
-                console.log(rooms[data.room].users)
                 rooms[data.room].visible=false;
                 SendAvailableRooms(io);
                 GameStart(data.room);
-        }
-        else
-        {
-            console.log("Not starting the game")
         }
     })
 
@@ -102,7 +82,6 @@ io.sockets.on('connection',function(socket){
     })
 
     socket.on('surrender',function(){
-        console.log('got surrender')
         rooms[users[socket.id].currentroom][socket.id].Life=0
         RemovePlayers(users[socket.id].currentroom)
     })
@@ -158,9 +137,7 @@ async function GameStart(actualRoomID){
     //sending out gamestart 
     SendGameStart(actualRoomID)
     
-    
     let wincondition=true;
-    let timeover=false;
 
     do{
         
@@ -228,14 +205,12 @@ function waitingforresponseortime(gameroomid){
     return new Promise(resolve=>{
         a=rooms.registerListener(function(changedRoomId){
             rooms[gameroomid].responsefrom=[]
-			console.log("Response waiter - Got 2 response")
 			clearTimeout(timer)
 			resolve(13);
         },gameroomid)
         let timer=setTimeout(() => {
             this.a=""
             resolve(10);
-            console.log("Response waiter - Timer ended for "+gameroomid)
             rooms[gameroomid].responsefrom=[]
         }, 12700)
     })
@@ -408,7 +383,6 @@ function ValidateResponse(roomID){
 }
 
 function UpdateHandDeckGraveyard(roomID){
-    console.log("starting hdg")
     rooms[roomID].users.forEach(userID => {
         let updatedstatus=cardmanager.UpdateHDG(rooms[roomID][userID].Hand,rooms[roomID][userID].Deck,rooms[roomID][userID].Graveyard)
         rooms[roomID][userID].Hand=updatedstatus.Hand
@@ -429,8 +403,6 @@ function ClearResponse(roomID){
     rooms[roomID].users.forEach(playerID => {
         rooms[roomID][playerID].response=[]
     });
-    console.log("----------------")
-    console.log(rooms[roomID])
 }
 
 function RemovePlayers(roomID){
@@ -448,7 +420,6 @@ function RemovePlayers(roomID){
 
         
     });
-    console.log(rooms[roomID.users])
 }
 
 function ValidateCardBuy(roomID){

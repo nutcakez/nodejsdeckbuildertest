@@ -92,8 +92,6 @@ exports.fightcalculating=(p1cards,p2cards)=>{
     if(p2life-p1fight<0){
         p2HpLoss=Math.abs(p2life-p1fight)
     }
-    console.log("HP loss of player1: "+p1HpLoss)
-    console.log("Hp loss of player2: "+p2HpLoss)
     return {
         'p1':{
             'lifeloss':p1HpLoss,
@@ -114,8 +112,6 @@ exports.buyroundcards=()=>{
     for(let i=0;i<3;i++){
         returnedcards.push(Math.floor(Math.random() * size))
     }
-    console.log(returnedcards)
-    console.log(size)
     return returnedcards
 }
 
@@ -163,7 +159,6 @@ exports.getHand=(hand,deck,graveyard)=>{
 exports.Cards=Cards;
 
 function deckshuffle(deck){
-    console.log("original deck:  "+deck)
     for (let i = deck.length - 1; i > 0; i--) {
         let temp;
         let j = Math.floor(Math.random() * (i + 1))
@@ -171,7 +166,6 @@ function deckshuffle(deck){
         deck[i]=deck[j]
         deck[j]=temp
     }
-    console.log("shuffled deck: "+deck)
     return deck
 }
 
