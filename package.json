@@ -14,7 +14,7 @@
     "@angular/cli": "^8.3.19",
     "eslint": "^6.5.1",
     "express": "^4.17.1",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.4.0"
   },
   "devDependencies": {
     "jasmine": "^3.5.0",
