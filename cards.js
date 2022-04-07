@@ -1,18 +1,18 @@
 let Cards={
     0:{
-        'name':'Húsos nagydarab',
+        'name':'General',
         'life':5,
         'attack':3,
-        'cost':5
+        'cost':4
     },
     1:{
-        'name':'Gyilkos kenyér',
-        'life':2,
+        'name':'Assasin',
+        'life':0,
         'attack':6,
-        'cost':0
+        'cost':2
     },
     2:{
-        'name':'Tüskés hordó',
+        'name':'Barricade',
         'life':4,
         'attack':1,
         'cost':2
@@ -27,6 +27,42 @@ let Cards={
         'name':'harci szekerce',
         'life':0,
         'attack':5,
+        'cost':3
+    },
+    5:{
+        'name':'Gyalogság',
+        'life':2,
+        'attack':1,
+        'cost':1
+    },
+    6:{
+        'name':'Tüzérség',
+        'life':1,
+        'attack':3,
+        'cost':2
+    },
+    7:{
+        'name':'Titkos terv',
+        'life':0,
+        'attack':2,
+        'cost':1
+    },
+    8:{
+        'name':'Árulás',
+        'life':-1,
+        'attack':3,
+        'cost':1
+    },
+    9:{
+        'name':'Rakéta állomás',
+        'life':1,
+        'attack':7,
+        'cost':4
+    },
+    10:{
+        'name':'Tank',
+        'life':3,
+        'attack':3,
         'cost':3
     }
 }
@@ -56,8 +92,6 @@ exports.fightcalculating=(p1cards,p2cards)=>{
     if(p2life-p1fight<0){
         p2HpLoss=Math.abs(p2life-p1fight)
     }
-    console.log("HP loss of player1: "+p1HpLoss)
-    console.log("Hp loss of player2: "+p2HpLoss)
     return {
         'p1':{
             'lifeloss':p1HpLoss,
@@ -78,8 +112,6 @@ exports.buyroundcards=()=>{
     for(let i=0;i<3;i++){
         returnedcards.push(Math.floor(Math.random() * size))
     }
-    console.log(returnedcards)
-    console.log(size)
     return returnedcards
 }
 
@@ -102,15 +134,20 @@ exports.choiceCards=(remainingdeck,useddeck)=>{
 
 //returns deck - graveyard - hand 
 exports.getHand=(hand,deck,graveyard)=>{
-    for(let i=0;i<hand.length;i++){
-        graveyard.push(hand.pop())
-    }
+    hand.forEach(element => {
+        graveyard.push(element)
+    });
+    hand=[]
+    // for(let i=0;i<hand.length;i++){
+    //     graveyard.push(hand.pop())
+    // }
     while(hand.length!=3){
         if(deck.length>0){
             hand.push(deck.pop())
         }
         else{
             deck=graveyard.slice()
+            deck=deckshuffle(deck)
             graveyard=[]
         }
     }
@@ -122,7 +159,6 @@ exports.getHand=(hand,deck,graveyard)=>{
 exports.Cards=Cards;
 
 function deckshuffle(deck){
-    console.log("original deck:  "+deck)
     for (let i = deck.length - 1; i > 0; i--) {
         let temp;
         let j = Math.floor(Math.random() * (i + 1))
@@ -130,6 +166,17 @@ function deckshuffle(deck){
         deck[i]=deck[j]
         deck[j]=temp
     }
-    console.log("shuffled deck: "+deck)
     return deck
+}
+
+exports.UpdateHDG=function(hand,deck,graveyard){
+    while(hand.length!=0){
+        graveyard.push(hand.pop())
+    }
+
+    return{
+        'Hand':hand,
+        'Deck':deck,
+        'Graveyard':graveyard
+    }
 }

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "name": "deckofwar",
   "version": "1.0.0",
@@ -20,3 +21,28 @@
     "webpack-cli": "^3.3.10"
   }
 }
+=======
+{
+  "name": "deckofwar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "node index.js",
+    "startdev": "node index.js dev"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@angular/cli": "^8.3.19",
+    "eslint": "^6.5.1",
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "jasmine": "^3.5.0",
+    "mocha": "^7.0.0"
+  }
+}
+>>>>>>> a50058a41994663c91eae1b04e1b4e6267ee7211
