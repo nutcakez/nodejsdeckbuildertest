@@ -1,0 +1,35 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: echo "hello world"
+    - run: git clone https://github.com/nutcakez/client_dof.git
+    - run: ls
+    - run: rm -r dist
+    - run: mkdir dist
+    - run: cp -R client_dof/dist ./
+    - run: git add dist
+    - run: git status
+    - run: git config --global user.email "you@example.com" && git config --global user.name "Your Name"
+    - run: git commit -m "Github action - dist copy"
+    - run: git push
