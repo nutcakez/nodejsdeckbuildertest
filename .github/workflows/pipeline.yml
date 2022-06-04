@@ -28,4 +28,5 @@ jobs:
     - run: rm -r dist
     - run: mkdir dist
     - run: cp -R client_dof/dist ./
-    - run: cd dist && ls
+    - run: git add dist
+    - run: git status
