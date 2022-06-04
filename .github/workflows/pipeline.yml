@@ -25,7 +25,7 @@ jobs:
     - run: echo "hello world"
     - run: git clone https://github.com/nutcakez/client_dof.git
     - run: ls
-    - run: rm -r /dist
+    - run: rm -r dist
     - run: mkdir dist
-    - run: cp /client_dof/dist /dist
+    - run: cp client_dof/dist dist
     - run: cd dist && ls
