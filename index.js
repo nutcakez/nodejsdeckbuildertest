@@ -2,8 +2,10 @@ var express=require("express");
 var app=express();
 var server=require("http").Server(app);
 let appPort=process.env.PORT||2000
+const compression = require('compression');
 var cardmanager=require('./cards.js');
-app.use(express.static('dist'));
+app.use(compression());
+app.use(express.static('dist'),compression());
 app.get("/style.css",function(req,res){
     res.sendFile(__dirname+'/style.css');
 })
