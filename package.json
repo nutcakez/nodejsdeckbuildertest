@@ -19,6 +19,6 @@
   },
   "devDependencies": {
     "jasmine": "^3.5.0",
-    "mocha": "^7.0.0"
+    "mocha": "^10.2.0"
   }
 }
